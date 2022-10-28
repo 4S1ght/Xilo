@@ -3,29 +3,28 @@ export const LOG_PREFIX = 'Xilo > ';
 
 export const DEFAULT_CNF_NAME = 'xilo.config.js'
 export const CNF_TEMPLATE = `
-module.exports = {
+module.exports =  {
 
-    /** Specifies scripts to run side by side in the terminal. */
-    scripts: {
-        /** Process name and its configuration */
-        typescript: {
-            /** Specifies the command used to spawn a process. */
-            spawn: 'tsc -w',
-            /** 
-             * Specifies script spawn method. Use "fork" when spawning Node 
-             * modules to monitor their resource usage from the CLI. 
-             */
-            spawMethod: 'spawn',
-            /** Specifies whether or not to show process output. */
-            stdout: true
-        }
+    /** Specifies miscellaneous settings used by many parts of the manager. */
+    settings: {
+        /** Specifies time gaps between spawning child processes. */
+        scriptSpawnDelay: 1 * 1000
     },
 
-    /** Specifies a set of tasks to execute once the manager is started. */
-    startupTasks: {
-        hello: () => {
-            console.log('Hello!')
+    /**
+     * Defines processes to spawn once the startup sequence has finished.
+     */
+    processes: {
+        /** Process name and its configuration */
+        typescript: {
+            /** Shell command that summons a CLI app or a script. */
+            command: "tsc -w",
+            /** Specifies the current working directory for the spawned process. */
+            cwd: "./src",
+            /** Specifies whether STDOUT should be ignored or piped to the main process. */
+            stdout: 'all'
         }
     }
-    
-}`;
+
+}
+`;

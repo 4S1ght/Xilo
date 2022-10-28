@@ -16,7 +16,7 @@ export default (argv: string[]) => {
         .showSuggestionAfterError(true)
         .configureOutput({
             writeOut: (str) => process.stdout.write(str),
-            writeErr: (str) => process.stdout.write(Terminal.formatError(true, true, str.replace('error:', 'Error:')))
+            writeErr: (str) => process.stdout.write(Terminal.formatError(true, true, str.replace('error:', 'Error:').replace("'\n", "' ")))
         })
         .action((config: string, options: { force: boolean }) => {
 
