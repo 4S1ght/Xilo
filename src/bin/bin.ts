@@ -2,7 +2,7 @@
 
 import path from 'path';
 import c from 'chalk';
-import Terminal from '../lib/Terminal';
+import { Terminal } from '../lib/Terminal';
 // import { BinInitError } from '../Errors';
 
 // ==============================================================

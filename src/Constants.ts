@@ -1,5 +1,6 @@
 
 export const LOG_PREFIX = 'Xilo > ';
+export const CLI_LOG_PREFIX = '➜'
 
 export const DEFAULT_CNF_NAME = 'xilo.config.js'
 export const CNF_TEMPLATE = `

@@ -2,10 +2,11 @@
 import path from "path";
 import fs from "fs";
 import c from 'chalk';
+import { Terminal } from "../lib/Terminal";
 import { findConfigFile } from "../Utils";
-import Terminal from "../lib/Terminal";
 import { program } from "commander";
 import { DEFAULT_CNF_NAME } from "../Constants";
+import * as CNF from "../../types/config";
 
 export default (argv: string[]) => {
 
@@ -32,7 +33,6 @@ export default (argv: string[]) => {
 
 function initProgram(fullConfigPath: string) {
 
-    const config = require(fullConfigPath)
-    console.log(config)
+    const config: CNF.Config = require(fullConfigPath);
 
 }

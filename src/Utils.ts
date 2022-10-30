@@ -40,8 +40,7 @@ export const isError = (err: unknown): err is Error =>
     err instanceof Error;
 
 
-
-
+    
 type File = string
 type Found = boolean
 /**

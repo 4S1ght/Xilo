@@ -2,8 +2,10 @@
 
 import EventProxy from "./EventProxy.class";
 import Process from './Process.class';
+import * as util from '../Utils';
 
 import type * as CNF from '../../types/config';
+
 
 
 interface ProcessManager {
@@ -35,6 +37,37 @@ class ProcessManager extends EventProxy<'spawn' | 'close' | 'kill' | 'restart' |
         let process = new Process(params.shift()!, params, p);
         this.processes[name] = process;
         return process;
+
+    }
+
+    public async createProcesses() {
+        
+        const processNames = Object.keys(this.config.processes);
+        
+        for (let i = 0; i < processNames.length; i++) {
+            const [processName, ...argv] = processNames[i].split(" ");
+            const processConfig = this.config.processes[processName];
+            this.processes[processName] = new Process(processName, argv, processConfig)
+        }
+
+    }
+
+    public async startEach(callback: (process: Process) => any) {
+
+        const spawnProcess = (name: string) => new Promise<Process>((resolve) => {
+            this.processes[name].on('spawn', () => {
+                this.emitCustom('spawn', name);
+                resolve(this.processes[name]);
+            });
+            this.processes[name].spawn();
+        })
+
+        for (const process in this.processes) {
+            const instance = await spawnProcess(process);
+            callback(instance)
+            await util.wait(this.config.settings.scriptSpawnDelay);
+        }
+        
     }
 
 }

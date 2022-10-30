@@ -4,7 +4,7 @@ import fs from "fs";
 import c from "chalk";
 import { program } from "commander";
 
-import Terminal from "../lib/Terminal";
+import { Terminal } from "../lib/Terminal";
 import { DEFAULT_CNF_NAME, CNF_TEMPLATE } from "../Constants";
 
 

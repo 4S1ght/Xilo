@@ -9,7 +9,9 @@ export interface Config {
      */
     settings: {
         /** Specifies time gaps between spawning child processes. */
-        scriptSpawnDelay: string
+        scriptSpawnDelay: number
+        /** Specifies whether or not to log process status logs that appear after a process is spawned, killed, restarted, etc... */
+        disableProcessStatusLogs: boolean
     }
 
     /**

@@ -1,8 +1,8 @@
 
 import c from "chalk";
-import { LOG_PREFIX } from "../Constants";
+import { LOG_PREFIX, CLI_LOG_PREFIX } from "../Constants";
 
-export default class Terminal {
+export class Terminal {
 
     /** Adds padding around a message. */
     private static pad = (content: string) => `\n${content}\n`;
@@ -27,4 +27,17 @@ export default class Terminal {
     public static error = (prefix = true, padding = true, ...content: string[]) => 
         console.log(Terminal.formatError(prefix, padding, ...content))
     
+}
+
+export class InnerTerminal {
+
+    /** Returns a formatted message. */
+    public static formatMessage = (prefix: boolean, ...content: string[]) => {
+        return `${prefix ? CLI_LOG_PREFIX : ''}${content.join(' ')}`;
+    }
+    
+    /** Displays a formatted message. */
+    public static message = (prefix = true, ...content: string[]) => 
+        console.log(InnerTerminal.formatMessage(prefix, ...content))
+
 }
