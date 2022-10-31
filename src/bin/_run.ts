@@ -5,13 +5,13 @@ import c from 'chalk';
 import { Terminal } from "../lib/Terminal";
 import { findConfigFile } from "../Utils";
 import { program } from "commander";
-import { DEFAULT_CNF_NAME } from "../Constants";
+import * as cst from "../Constants";
 import * as CNF from "../../types/config";
 
 export default (argv: string[]) => {
 
     program
-        .argument('[config]', 'Configuration file location', DEFAULT_CNF_NAME)
+        .argument('[config]', 'Configuration file location', cst.CNF_DEFAULT_NAME)
         .configureOutput({
             writeOut: (str) => process.stdout.write(str),
             writeErr: (str) => process.stdout.write(Terminal.formatError(true, true, str.replace('error:', 'Error:').replace("'\n", "' ")))

@@ -1,8 +1,17 @@
 
-export const LOG_PREFIX = 'Xilo > ';
-export const CLI_LOG_PREFIX = '>'
 
-export const DEFAULT_CNF_NAME = 'xilo.config.js'
+// Terminal
+export const T_COLOR_TITLE  = "#ffa139";
+export const T_COLOR_LINK   = "#ffcf65";
+export const T_COLOR_TEXT   = "grey";
+
+export const T_PREFIX_BIG   = 'Xilo >';
+export const T_PREFIX_SMALL = '>';
+
+// Program
+export const CNF_DEFAULT_NAME = 'xilo.config.js'
+
+// Templates
 export const CNF_TEMPLATE = `
 module.exports =  {
 

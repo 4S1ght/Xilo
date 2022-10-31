@@ -2,7 +2,7 @@
 import fs from "fs";
 import path from "path";
 import c from 'chalk';
-import { DEFAULT_CNF_NAME, LOG_PREFIX } from "./Constants";
+import * as cst from "./Constants";
 
 /**
  * Creates a time gap in code execution if when used in async functions.
@@ -50,7 +50,7 @@ export function findConfigFile(file: string): [File, Found] {
     
     let filePath = '';
     
-    if      ([undefined, ".", "./"].includes(file)) filePath = path.join(path.join(process.cwd(), DEFAULT_CNF_NAME));
+    if      ([undefined, ".", "./"].includes(file)) filePath = path.join(path.join(process.cwd(), cst.CNF_DEFAULT_NAME));
     else if (path.extname(file) === '.js')          filePath = path.isAbsolute(file) ? file : path.join(process.cwd(), file);
     
     return fs.existsSync(filePath) 

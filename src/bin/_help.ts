@@ -1,44 +1,40 @@
 
-import $c from 'chalk';
-import { DEFAULT_CNF_NAME } from '../Constants';
+import c from 'chalk';
+import fs from 'fs';
+import path from 'path'
+import * as cst from '../Constants';
 
-const green = (x: string) => $c.green(x);
-const grey = (x: string) => $c.grey(x);
-const line = (x: string) => $c.underline(x);
+//
 
-const getFixedLength = (x: string, length: number) => 
-    x + new Array(length - x.length).fill(',').join('');
+const XILO =        c.bold.hex(cst.T_COLOR_TITLE) ("Xilo")
+const VERSION =     c.hex(cst.T_COLOR_TITLE)      (JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf-8')).version);
+const HELP =        c.hex(cst.T_COLOR_LINK)       ("xilo help")
+const INIT =        c.hex(cst.T_COLOR_LINK)       ("xilo init <path>")
+const PREFIX =      c.hex(cst.T_COLOR_LINK)       (cst.T_PREFIX_SMALL)
 
-const BRAND = `
-__  _____ _     ___  
-\\ \\/ /_ _| |   / _ \\ 
- \\  / | || |  | | | |
- /  \\_| || |__| |_| |
-/_/\\_\\___|_____\\___/ 
-`;
+const UPTIME =      process.uptime().toFixed(2) + 's'
 
-const TEXT = `
-Note: Use --help To display a list of accepted parameters for specific commands.
-___________________________________________________________________________________
+//
 
-init   <config>      Creates a template config file in a specified location.
-                     Defaults to _./${DEFAULT_CNF_NAME}_.
+const splash = [
+    ``,
+    `   ${XILO} ${VERSION}  ${UPTIME}`,
+    ``,
+    `   ${PREFIX}  Type ${HELP} to list out available commands.`,
+    `   ${PREFIX}  Or create a default config file with ${INIT}.`,
+    ``
+];
 
-       --force, -f   *Foce the template file.*
-
-run    <config>      Starts the manager using the specified config file.
-                     Defaults to _./${DEFAULT_CNF_NAME}_.
+const help = `
 `
 
-export default () => {
-    let formattedText = TEXT
-        .replace(/\n(?<x>\w+)*/g,                green("\n$1"))
-        .replace(/\<(?<x>[a-zA-z ?]+)*\>/g,      grey("<$1>"))
-        .replace(/\*(?<x>[a-zA-z ._<>*/]+)*\*/g, grey("$1"))
-        .replace(/\_(?<x>[a-zA-z ./]+)*\_/g,     line("$1"))
-        .replace(/--(?<x>[A-z]+)*/g,             grey('--$1'))
-        .replace(/-(?<x>[A-z]+)*/g,              grey('-$1'))
+//
 
-    console.log(green(BRAND))
-    console.log(formattedText)
+export default (disableHelp: boolean) => {
+
+    console.log(c.grey(splash.join('\n')))
+
+    if (disableHelp !== true) {
+        console.log(help)
+    }
 }

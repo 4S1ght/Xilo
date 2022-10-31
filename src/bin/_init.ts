@@ -5,13 +5,13 @@ import c from "chalk";
 import { program } from "commander";
 
 import { Terminal } from "../lib/Terminal";
-import { DEFAULT_CNF_NAME, CNF_TEMPLATE } from "../Constants";
+import * as cst from "../Constants";
 
 
 export default (argv: string[]) => {
 
     program
-        .argument('[config]', 'Configuration file location', DEFAULT_CNF_NAME)
+        .argument('[config]', 'Configuration file location', cst.CNF_DEFAULT_NAME)
         .option('-f, --force', 'Forces the creation of the template config file.', false)
         .showSuggestionAfterError(true)
         .configureOutput({
@@ -28,7 +28,7 @@ export default (argv: string[]) => {
                 c.red(`Error: Another file already exists in this location. Use "--force" to override it.\n${c.gray('File ' + fullPath)}`),
             );
     
-            fs.writeFileSync(fullPath, CNF_TEMPLATE, 'utf-8');
+            fs.writeFileSync(fullPath, cst.CNF_TEMPLATE, 'utf-8');
             Terminal.message(true, true, c.green(`${options.force ? 'Overwritten' : 'Created'} config file in ` + c.underline(fullPath)))
     
         });

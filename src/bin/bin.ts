@@ -18,7 +18,6 @@ const modules: string[] = [
 ];
 
 const helpModule = path.join(__dirname, "_help.js");
-const splashModule = path.join(__dirname, "__splash.js");
 
 // ==============================================================
 
@@ -28,8 +27,8 @@ const splashModule = path.join(__dirname, "__splash.js");
     const command = argv[0];
 
     if (command === undefined) {
-        const module = require(splashModule);
-        return (module.default || module)();
+        const module = require(helpModule);
+        return (module.default || module)(true);
     }
 
     if (modules.includes(command)) {
