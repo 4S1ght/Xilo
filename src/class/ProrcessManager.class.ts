@@ -28,7 +28,7 @@ class ProcessManager extends EventProxy<'spawn' | 'close' | 'kill' | 'restart' |
     }
 
     public static instance: ProcessManager
-    public static defaultConfig = {}
+    public static defaultConfig: CNF.Config = {}
 
     public createProcess(name: string, p: CNF.ProcessConfig): Process {
 
@@ -42,11 +42,11 @@ class ProcessManager extends EventProxy<'spawn' | 'close' | 'kill' | 'restart' |
 
     public async createProcesses() {
         
-        const processNames = Object.keys(this.config.processes);
+        const processNames = Object.keys(this.config.processes!);
         
         for (let i = 0; i < processNames.length; i++) {
             const [processName, ...argv] = processNames[i].split(" ");
-            const processConfig = this.config.processes[processName];
+            const processConfig = this.config.processes![processName];
             this.processes[processName] = new Process(processName, argv, processConfig)
         }
 
@@ -65,7 +65,7 @@ class ProcessManager extends EventProxy<'spawn' | 'close' | 'kill' | 'restart' |
         for (const process in this.processes) {
             const instance = await spawnProcess(process);
             callback(instance)
-            await util.wait(this.config.settings.scriptSpawnDelay);
+            await util.wait((this.config.settings || {} as any).scriptSpawnDelay || 500);
         }
         
     }

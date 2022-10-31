@@ -35,4 +35,6 @@ function initProgram(fullConfigPath: string) {
 
     const config: CNF.Config = require(fullConfigPath);
 
+    console.log(config)
+
 }

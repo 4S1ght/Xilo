@@ -3,13 +3,14 @@
 import path from 'path';
 import c from 'chalk';
 import { Terminal } from '../lib/Terminal';
-// import { BinInitError } from '../Errors';
+
+process.title = "Xilo"
 
 // ==============================================================
 
+
 // Specifies the list of available commands
-// An error is thrown if a command is used 
-// that's not on this list.
+// An error is thrown if a command is used that's not on this list.
 const modules: string[] = [
     'help',
     'run', 
@@ -17,6 +18,7 @@ const modules: string[] = [
 ];
 
 const helpModule = path.join(__dirname, "_help.js");
+const splashModule = path.join(__dirname, "__splash.js");
 
 // ==============================================================
 
@@ -26,7 +28,7 @@ const helpModule = path.join(__dirname, "_help.js");
     const command = argv[0];
 
     if (command === undefined) {
-        const module = require(helpModule);
+        const module = require(splashModule);
         return (module.default || module)();
     }
 
