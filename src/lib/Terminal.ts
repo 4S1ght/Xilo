@@ -19,7 +19,7 @@ export class Terminal {
 
     /** Returns a formatted error message */
     public static formatError = (prefix = true, padding = true, ...content: string[]) => {
-        const message = `${prefix ? cst.T_PREFIX_BIG : ''}${c.red(content.join(' '))}`;
+        const message = `${prefix ? cst.T_PREFIX_BIG : ''} ${c.red(content.join(' '))}`;
         return padding ? Terminal.pad(message) : message;
     }
 

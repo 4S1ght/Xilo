@@ -9,9 +9,10 @@ export const T_PREFIX_BIG   = 'Xilo >'
 export const T_PREFIX_SMALL = '>'
 
 // Program
-export const CNF_BASE = 'xilo.config'
-export const CNF_EXT  = '.js'
-export const CNF_NAME = CNF_BASE + CNF_EXT
+export const CNF_BASE       = 'xilo.config'
+export const CNF_EXT        = ['.js', '.ts']
+export const CNF_NAME_JS    = CNF_BASE + CNF_EXT[0]
+export const CNF_NAME_TS    = CNF_BASE + CNF_EXT[1]
 
 // Templates
 export const CNF_TEMPLATE = `
