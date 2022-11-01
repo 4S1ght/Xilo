@@ -4,14 +4,14 @@ import fs from "fs";
 import c from "chalk";
 import { program } from "commander";
 
-import { Terminal } from "../lib/Terminal";
-import * as cst from "../Constants";
+import { Terminal } from "../lib/Terminal.js";
+import * as cst from "../Constants.js";
 
 
 export default (argv: string[]) => {
 
     program
-        .argument('[config]', 'Configuration file location', cst.CNF_DEFAULT_NAME)
+        .argument('[config]', 'Configuration file location', cst.CNF_NAME)
         .option('-f, --force', 'Forces the creation of the template config file.', false)
         .showSuggestionAfterError(true)
         .configureOutput({

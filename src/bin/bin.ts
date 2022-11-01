@@ -2,7 +2,12 @@
 
 import path from 'path';
 import c from 'chalk';
-import { Terminal } from '../lib/Terminal';
+import { Terminal } from '../lib/Terminal.js';
+import * as util from '../Utils.js';
+
+import * as url from 'url';
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 process.title = "Xilo"
 
@@ -17,24 +22,24 @@ const modules: string[] = [
     'init'
 ];
 
-const helpModule = path.join(__dirname, "_help.js");
+const helpModule = util.getAbsURL(__dirname, "_help.js").href;
 
 // ==============================================================
 
-(function main() {
+(async function main() {
     
     const argv = process.argv.slice(2, process.argv.length);
     const command = argv[0];
 
     if (command === undefined) {
-        const module = require(helpModule);
+        const module = await import(helpModule);
         return (module.default || module)(true);
     }
 
     if (modules.includes(command)) {
-        const modulePath = path.join(__dirname, `_${command}.js`);
+        const modulePath = util.getAbsURL(__dirname, `_${command}.js`).href;
         const moduleArgv = argv.slice(1, argv.length);
-        const module = require(modulePath);
+        const module = await import(modulePath);
         return (module.default || module)(moduleArgv);
     }
 

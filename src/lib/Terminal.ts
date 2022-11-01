@@ -1,6 +1,6 @@
 
 import c from "chalk";
-import { LOG_PREFIX, CLI_LOG_PREFIX } from "../Constants";
+import * as cst from "../Constants.js";
 
 export class Terminal {
 
@@ -9,7 +9,7 @@ export class Terminal {
     
     /** Returns a formatted message. */
     public static formatMessage = (prefix: boolean, padding: boolean, ...content: string[]) => {
-        const message = `${prefix ? LOG_PREFIX : ''}${content.join(' ')}`;
+        const message = `${prefix ? cst.T_PREFIX_BIG : ''} ${content.join(' ')}`;
         return padding ? Terminal.pad(message) : message;
     }
 
@@ -19,7 +19,7 @@ export class Terminal {
 
     /** Returns a formatted error message */
     public static formatError = (prefix = true, padding = true, ...content: string[]) => {
-        const message = `${prefix ? LOG_PREFIX : ''}${c.red(content.join(' '))}`;
+        const message = `${prefix ? cst.T_PREFIX_BIG : ''}${c.red(content.join(' '))}`;
         return padding ? Terminal.pad(message) : message;
     }
 
@@ -33,7 +33,7 @@ export class InnerTerminal {
 
     /** Returns a formatted message. */
     public static formatMessage = (prefix: boolean, ...content: string[]) => {
-        return `${prefix ? CLI_LOG_PREFIX : ''}${content.join(' ')}`;
+        return `${prefix ? cst.T_PREFIX_SMALL : ''}${content.join(' ')}`;
     }
     
     /** Displays a formatted message. */

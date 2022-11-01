@@ -1,8 +1,8 @@
 
 
-import EventProxy from "./EventProxy.class";
-import Process from './Process.class';
-import * as util from '../Utils';
+import EventProxy from "./EventProxy.class.js";
+import Process from './Process.class.js';
+import * as util from '../Utils.js';
 
 import type * as CNF from '../../types/config';
 

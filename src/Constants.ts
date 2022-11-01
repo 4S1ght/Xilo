@@ -1,15 +1,17 @@
 
 
 // Terminal
-export const T_COLOR_TITLE  = "#ffa139";
-export const T_COLOR_LINK   = "#ffcf65";
-export const T_COLOR_TEXT   = "grey";
+export const T_COLOR_TITLE  = "#ffa139"
+export const T_COLOR_LINK   = "#ffcf65"
+export const T_COLOR_TEXT   = "grey"
 
-export const T_PREFIX_BIG   = 'Xilo >';
-export const T_PREFIX_SMALL = '>';
+export const T_PREFIX_BIG   = 'Xilo >'
+export const T_PREFIX_SMALL = '>'
 
 // Program
-export const CNF_DEFAULT_NAME = 'xilo.config.js'
+export const CNF_BASE = 'xilo.config'
+export const CNF_EXT  = '.js'
+export const CNF_NAME = CNF_BASE + CNF_EXT
 
 // Templates
 export const CNF_TEMPLATE = `

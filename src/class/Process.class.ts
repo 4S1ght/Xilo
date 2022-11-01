@@ -1,8 +1,8 @@
 
 import EventEmitter from "events";
-import EventProxy from "./EventProxy.class";
 import cp from 'child_process';
 import treeKill from "tree-kill";
+import EventProxy from "./EventProxy.class.js";
 
 
 export default interface Process {
