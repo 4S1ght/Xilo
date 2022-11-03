@@ -14,11 +14,11 @@ export const getAbsURL = (...module: string[]) => {
 }
 
 
-export const chooseConfigPath = (file?: string) => {
+export const chooseConfigCreationPath = (file?: string) => {
 
     file = file || '';
 
-    let FINAL = ''
+    let FINAL = '';
 
     // Make sure the path is absolute and default to CWD if it isn't
     let filePath = path.isAbsolute(file) && process.platform !== 'win32' && ['\\', '/'].includes(file[0])
@@ -39,6 +39,26 @@ export const chooseConfigPath = (file?: string) => {
     if (fs.existsSync(FINAL)) return FINAL;
     
     return filePath + (path.extname(filePath) === cst.CNF_EXT[0] ? '' : cst.CNF_EXT[0]);
+}
+
+export const getConfigPath = (file?: string): string | null => {
+
+    file = file || '';
+
+    // /some/dir/
+    // /some/dir/xilo.config
+
+    // Make sure the path is absolute and default to CWD if it isn't
+    let filePath = path.isAbsolute(file) && process.platform !== 'win32' && ['\\', '/'].includes(file[0])
+        ? file
+        : path.join(process.cwd(), file);
+    
+    if (cst.CNF_EXT.includes(path.extname(filePath))) {
+        return filePath;
+    }
+    
+    return '';
+
 }
 
 /**

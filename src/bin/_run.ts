@@ -17,18 +17,20 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 export default (argv: string[]) => {
 
     program
-        .argument('[config]', 'Configuration file location', cst.CNF_NAME)
+        .argument('[config]', 'Configuration file location')
         .configureOutput({
             writeOut: (str) => process.stdout.write(str),
             writeErr: (str) => process.stdout.write(Terminal.formatError(true, true, str.replace('error:', 'Error:').replace("'\n", "' ")))
         })
-        .action(async (configFile: string) => {
+        .action(async (configPath: string) => {
 
-            const [fullConfigPath, found] = util.getConfig(configFile);
-            if (!found) return Terminal.error(true, true, c.red(`Error: Missing configuration file. Use "xilo init <config>" to create a basic config file.\n${c.gray('In: ' + util.getAbsURL(__dirname, configFile).href)}`));
+            const configFile = util.getConfigPath(configPath);
+            console.log(configFile)
+            const found = fs.existsSync(configFile!);
+
+            if (!found) return Terminal.error(true, true, c.red(`Error: Missing configuration file. Use "xilo init <config>" to create a basic config file.`));
         
-            const config: CNF.Config = await import(util.getAbsURL(fullConfigPath!).href);
-        
+            const config: CNF.Config = await import(util.getAbsURL(configFile!).href);
             console.log(config)
 
         })

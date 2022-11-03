@@ -24,7 +24,7 @@ export default (argv: string[]) => {
         })
         .action((config: string | undefined, options: { force: boolean }) => {
 
-            const cnfPath = util.chooseConfigPath(config);
+            const cnfPath = util.chooseConfigCreationPath(config);
             const found = fs.existsSync(cnfPath);
 
             if (found && !options.force) {
