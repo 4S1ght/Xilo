@@ -25,41 +25,38 @@ export const chooseConfigCreationPath = (file?: string) => {
         ? file
         : path.join(process.cwd(), file);
 
-    // Append the default "xilo.config" file name to the path if it doesn't
+    // Append the default "xilo.config.js" file name to the path if it doesn't
     // point to a specific file.
-    if ( (!fs.existsSync(filePath) || fs.lstatSync(filePath).isDirectory()) && !cst.CNF_EXT.includes(path.extname(file)) )
-        filePath = path.join(filePath, cst.CNF_BASE);
-
-
-    // Add the .TS extname if not specified
-    if (!cst.CNF_EXT.includes(path.extname(filePath)))
-        FINAL = `${filePath}${cst.CNF_EXT[1]}`;
+    if ( (!fs.existsSync(filePath) || fs.lstatSync(filePath).isDirectory()) && path.extname(file) !== ".js" )
+        filePath = path.join(filePath, cst.CNF_FILE_NAME);
     
     // Return the file path if a TS config has been found
     if (fs.existsSync(FINAL)) return FINAL;
     
-    return filePath + (path.extname(filePath) === cst.CNF_EXT[0] ? '' : cst.CNF_EXT[0]);
+    return filePath;
 }
 
-export const getConfigPath = (file?: string): string | null => {
+export const getConfigPath = (file?: string): [string, boolean] => {
 
     file = file || '';
-
-    // /some/dir/
-    // /some/dir/xilo.config
 
     // Make sure the path is absolute and default to CWD if it isn't
     let filePath = path.isAbsolute(file) && process.platform !== 'win32' && ['\\', '/'].includes(file[0])
         ? file
         : path.join(process.cwd(), file);
-    
-    if (cst.CNF_EXT.includes(path.extname(filePath))) {
-        return filePath;
+        
+    if (path.extname(filePath) === '.js')
+        return [filePath, fs.existsSync(filePath)];
+
+    if (!path.extname(filePath)) {
+        const JS = path.join(filePath, cst.CNF_FILE_NAME)
+        if (fs.existsSync(JS)) return [JS, true];
     }
     
-    return '';
+    return [filePath, fs.existsSync(filePath)];
 
 }
+
 
 /**
  * Creates a time gap in code execution if when used in async functions.

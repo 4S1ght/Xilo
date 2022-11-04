@@ -24,9 +24,7 @@ export default (argv: string[]) => {
         })
         .action(async (configPath: string) => {
 
-            const configFile = util.getConfigPath(configPath);
-            console.log(configFile)
-            const found = fs.existsSync(configFile!);
+            const [configFile, found] = util.getConfigPath(configPath);
 
             if (!found) return Terminal.error(true, true, c.red(`Error: Missing configuration file. Use "xilo init <config>" to create a basic config file.`));
         

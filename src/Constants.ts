@@ -9,14 +9,11 @@ export const T_PREFIX_BIG   = 'Xilo >'
 export const T_PREFIX_SMALL = '>'
 
 // Program
-export const CNF_BASE       = 'xilo.config'
-export const CNF_EXT        = ['.js', '.ts']
-export const CNF_NAME_JS    = CNF_BASE + CNF_EXT[0]
-export const CNF_NAME_TS    = CNF_BASE + CNF_EXT[1]
+export const CNF_FILE_NAME  = 'xilo.config.js'
 
 // Templates
 export const CNF_TEMPLATE = `
-module.exports =  {
+export default {
 
     /** Specifies miscellaneous settings used by many parts of the manager. */
     settings: {
