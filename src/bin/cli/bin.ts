@@ -2,7 +2,7 @@
 
 import path from 'path';
 import c from 'chalk';
-import { Terminal } from '../lib/Terminal.js';
+import { Terminal } from '../Terminal.js';
 import * as util from '../Utils.js';
 
 import * as url from 'url';

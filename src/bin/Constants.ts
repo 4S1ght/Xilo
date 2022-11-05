@@ -5,6 +5,9 @@ export const T_COLOR_TITLE  = "#ffa139"
 export const T_COLOR_LINK   = "#ffcf65"
 export const T_COLOR_TEXT   = "grey"
 
+export const T_COLOR_H_NAME     = "#ffcf65"
+export const T_COLOR_H_PARAM    = "#ffcf65"
+
 export const T_PREFIX_BIG   = 'Xilo >'
 export const T_PREFIX_SMALL = '>'
 

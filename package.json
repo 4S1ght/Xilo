@@ -6,7 +6,7 @@
   "license": "GPL-3.0",
   "type": "module",
   "bin": {
-    "xilo": "./build/bin/bin.js"
+    "xilo": "./build/bin/cli/bin.js"
   },
   "dependencies": {
     "@types/node": "^18.8.3",

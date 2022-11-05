@@ -1,6 +1,6 @@
 
 import c from "chalk";
-import * as cst from "../Constants.js";
+import * as cst from "./Constants.js";
 
 export class Terminal {
 
@@ -27,17 +27,4 @@ export class Terminal {
     public static error = (prefix = true, padding = true, ...content: string[]) => 
         console.log(Terminal.formatError(prefix, padding, ...content))
     
-}
-
-export class InnerTerminal {
-
-    /** Returns a formatted message. */
-    public static formatMessage = (prefix: boolean, ...content: string[]) => {
-        return `${prefix ? cst.T_PREFIX_SMALL : ''}${content.join(' ')}`;
-    }
-    
-    /** Displays a formatted message. */
-    public static message = (prefix = true, ...content: string[]) => 
-        console.log(InnerTerminal.formatMessage(prefix, ...content))
-
 }

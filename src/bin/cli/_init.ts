@@ -3,7 +3,7 @@ import path from "path"
 import fs from "fs";
 import c from "chalk";
 import { program } from "commander";
-import { Terminal } from "../lib/Terminal.js";
+import { Terminal } from "../Terminal.js";
 import * as cst from "../Constants.js";
 import * as util from '../Utils.js'
 

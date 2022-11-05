@@ -53,7 +53,7 @@ export const getConfigPath = (file?: string): [string, boolean] => {
         if (fs.existsSync(JS)) return [JS, true];
     }
     
-    return [filePath, fs.existsSync(filePath)];
+    return [filePath, fs.existsSync(filePath) && path.extname(filePath) === '.js'];
 
 }
 
