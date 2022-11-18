@@ -28,7 +28,7 @@ export default (argv: string[]) => {
             const [configFile, found] = util.getConfigPath(configPath);
             if (!found) return Terminal.error(true, true, c.red(`Error: Missing configuration file. Use "xilo init <config>" to create a basic template.`));
             
-            const config: CNF.Config = await import(util.getAbsURL(configFile!).href);
+            const config: CNF.Config = (await import(util.getAbsURL(configFile!).href)).default;
             INIT(config)
             
         })

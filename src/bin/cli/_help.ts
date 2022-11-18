@@ -43,7 +43,6 @@ ________________________________________________________________________________
 
 init   <config>      Creates a template config file in a specified location.
                      Defaults to _./${cst.CNF_FILE_NAME}_
-
        --force, -f   *Foce the template file.*
 
 run    <config>      Starts the manager using the specified config file.
@@ -53,7 +52,6 @@ run    <config>      Starts the manager using the specified config file.
 //
 
 export default (disableHelp: boolean) => {
-
 
     if (disableHelp === true) {
         console.log(SPLASH_MAIN.join('\n').replace("%uptime%", getUptime()))

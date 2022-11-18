@@ -7,8 +7,7 @@ import * as util from '../Utils.js';
 import type * as CNF from '../../../types/config';
 
 
-
-interface ProcessManager {
+export interface ProcessManager {
     on(event: 'spawn',          callback: () => any): this
     on(event: 'close',          callback: () => any): this
     on(event: 'kill',           callback: () => any): this
@@ -16,7 +15,7 @@ interface ProcessManager {
     on(event: 'kill-error',     callback: (err: Error) => any): this
     on(event: 'restart-error',  callback: (err: Error) => any): this
 }
-class ProcessManager extends EventProxy<'spawn' | 'close' | 'kill' | 'restart' | 'kill-error' | 'restart-error'> {
+export class ProcessManager extends EventProxy<'spawn' | 'close' | 'kill' | 'restart' | 'kill-error' | 'restart-error'> {
 
     public processes: Record<string, Process> = {}
     public config: CNF.Config;
@@ -28,33 +27,27 @@ class ProcessManager extends EventProxy<'spawn' | 'close' | 'kill' | 'restart' |
     }
 
     public static instance: ProcessManager
-    public static defaultConfig: CNF.Config = {}
-
-    public createProcess(name: string, p: CNF.ProcessConfig): Process {
-
-        if (!p.command) throw new Error('ProcessManager.createProcess Error - Unknown spawn command.')
-        let params = p.command.split(' ');
-        let process = new Process(params.shift()!, params, p);
-        this.processes[name] = process;
-        return process;
-
+    public static defaultConfig: CNF.Config = {
+        settings: { scriptSpawnDelay: 500 }
     }
 
     public async createProcesses() {
         
-        const processNames = Object.keys(this.config.processes!);
+        const processNames = Object.keys(this.config.processes!)
         
         for (let i = 0; i < processNames.length; i++) {
-            const [processName, ...argv] = processNames[i].split(" ");
-            const processConfig = this.config.processes![processName];
-            this.processes[processName] = new Process(processName, argv, processConfig)
+            const name = processNames[i]
+            const processConfig = this.config.processes![name]
+            const [command, ...argv] = processConfig.command.split(' ')
+            this.processes[name] = new Process(name, command, argv, processConfig)
         }
 
     }
 
-    public async startEach(callback: (process: Process) => any) {
+    public async startEach(callback?: (process: Process) => any) {
 
         const spawnProcess = (name: string) => new Promise<Process>((resolve) => {
+            if (callback) callback(this.processes[name])
             this.processes[name].on('spawn', () => {
                 this.emitCustom('spawn', name);
                 resolve(this.processes[name]);
@@ -63,8 +56,7 @@ class ProcessManager extends EventProxy<'spawn' | 'close' | 'kill' | 'restart' |
         })
 
         for (const process in this.processes) {
-            const instance = await spawnProcess(process);
-            callback(instance)
+            await spawnProcess(process);
             await util.wait((this.config.settings || {} as any).scriptSpawnDelay || 500);
         }
         
@@ -72,6 +64,6 @@ class ProcessManager extends EventProxy<'spawn' | 'close' | 'kill' | 'restart' |
 
 }
 
-export function createProcessManager(config: CNF.Config) {
+export default function createProcessManager(config: CNF.Config) {
     return ProcessManager.instance || new ProcessManager(config);
 }

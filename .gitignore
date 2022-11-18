@@ -21,6 +21,8 @@ lerna-debug.log*
 node_modules/
 build/
 old/
+tests/*
+src/lib/placeholder.ts
 
 xilo.config.js
 

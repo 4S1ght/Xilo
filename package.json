@@ -1,6 +1,6 @@
 {
   "name": "xilo",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "4Sight",
   "description": "A process manager and helper tool for software development",
   "license": "GPL-3.0",
@@ -15,6 +15,7 @@
     "tree-kill": "^1.2.2"
   },
   "scripts": {
+    "xilo": "node ./build/bin/cli/bin.js",
     "tsc": "tsc -w"
   },
   "repository": {

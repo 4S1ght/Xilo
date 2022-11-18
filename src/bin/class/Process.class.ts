@@ -18,6 +18,7 @@ export default class Process extends EventProxy<'spawn' | 'close' | 'kill' | 're
     declare public child: cp.ChildProcess
     declare public alive: boolean
 
+    public name: string;
     public spawnCommand: string;
     public spawnArguments: string[];
     public spawnOptions: cp.SpawnOptions;
@@ -25,10 +26,11 @@ export default class Process extends EventProxy<'spawn' | 'close' | 'kill' | 're
     public status: 'awaiting' | 'alive' | 'dead' | 'killed';
     public restarted = false;
 
-    constructor(command: string, argv: string[], options?: cp.SpawnOptions) {
+    constructor(name: string, command: string, argv: string[], options?: cp.SpawnOptions) {
 
         super()
 
+        this.name = name;
         this.spawnCommand = command;
         this.spawnArguments = argv;
         this.spawnOptions = options || {};

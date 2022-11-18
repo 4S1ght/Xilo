@@ -21,7 +21,7 @@ export default {
     /** Specifies miscellaneous settings used by many parts of the manager. */
     settings: {
         /** Specifies time gaps between spawning child processes. */
-        scriptSpawnDelay: 1 * 1000
+        scriptSpawnDelay: 1 * 500
     },
 
     /**
