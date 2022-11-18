@@ -2,7 +2,7 @@
 import c from 'chalk';
 
 import createManager from '../class/ProrcessManager.class.js'
-import LivePrompt from '../lib/LivePrompt.js'
+import LivePrompt from '../LiveTerminal.js'
 
 import type Process from '../../bin/class/Process.class'
 import type { ProcessManager } from '../class/ProrcessManager.class.js'
@@ -53,12 +53,12 @@ function setProcessEventMessages(process: Process) {
 
 function setPromptCommandHandlers(prompt: LivePrompt, manager: ProcessManager) {
 
-    prompt.on('exit', async () => {
-        for (const name in manager.processes) {
-            await manager.processes[name].kill()
-        }
-        process.exit();
-    })
+    // prompt.on('exit', async () => {
+    //     for (const name in manager.processes) {
+    //         await manager.processes[name].kill()
+    //     }
+    //     process.exit();
+    // })
 
     // prompt.on('command', (argv: string[]) => {
     //     const argv
