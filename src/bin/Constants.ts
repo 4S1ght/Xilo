@@ -1,5 +1,7 @@
 
 
+export const SUPPORTED_PLATFORMS = ['win32', 'darwin', 'linux']
+
 // Terminal
 export const T_COLOR_TITLE  = "#ffa139"
 export const T_COLOR_LINK   = "#ffcf65"

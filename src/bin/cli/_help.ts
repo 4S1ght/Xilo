@@ -34,6 +34,12 @@ const SPLASH_MAIN = [
     ``
 ];
 
+const PLATFORM_SUPPORT = [
+    `   WARNING: Officially supported platforms include: ${cst.SUPPORTED_PLATFORMS.join(', ')}.`,
+    `   "${process.platform}" is not supported and issues might appear.`,
+    ``
+]
+
 const SPLASH_HELP = `
 
 ${XILO} ${VERSION}  %uptime%
@@ -55,6 +61,8 @@ export default (disableHelp: boolean) => {
 
     if (disableHelp === true) {
         console.log(SPLASH_MAIN.join('\n').replace("%uptime%", getUptime()))
+        if (!cst.SUPPORTED_PLATFORMS.includes(process.platform)) 
+            console.log(c.red(`${PLATFORM_SUPPORT.join('\n')}`))
     }
     else {
 

@@ -9,8 +9,7 @@ import url from 'url';
  * Creates a URL for programmatically loading modules and files
  */
 export const getAbsURL = (...module: string[]) => {
-    if (process.platform === 'win32') return url.pathToFileURL(path.join(...module))
-    throw new Error('Unsupported platform.')
+    return url.pathToFileURL(path.join(...module))
 }
 
 
