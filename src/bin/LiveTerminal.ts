@@ -11,8 +11,9 @@ interface KeyInput {
 }
 
 /** 
- * Max chars in one command 
- * ! IMPORTANT: will change to process.stdout.columnsdue to bugs while char count exceeds the numbert of columns
+ * Max chars in one command  
+ * ! IMPORTANT: will change to process.stdout.columns due to bugs while char count exceeds the number of columns
+ * ! This will also allow for horizontal scrolling.
  */
 const MAX_CHARS = 70
 /** Delay between CTRL+C to quit the application. */
@@ -62,32 +63,32 @@ export class Prompt extends EventEmitter {
     private _displayCommandString(text?: string) {
         readline.cursorTo(process.stdout, 0, process.stdout.rows, () => {
             readline.clearLine(process.stdout, 0, () => {
-                process.stdout.write(text || '');
-            });
-        });
+                process.stdout.write(text || '')
+            })
+        })
     }
 
     /* Get the currently edited command. */
-    private _getCurrentCommand = () => this._history[this._historyIndex];
+    private _getCurrentCommand = () => this._history[this._historyIndex]
     /** Get the last command that was used. */
-    private _getLastCommand = () => this._history[this._history.length - 1];
+    private _getLastCommand = () => this._history[this._history.length - 1]
     /** Check whether editing a command from history to copy it to the current working array. */
-    private _isEditingOldCommand = () => this._historyIndex < this._history.length - 1;
+    private _isEditingOldCommand = () => this._historyIndex < this._history.length - 1
     
     /** Command history */
     private _history: string[][] = [[]]
     /** Current position in the history */
     private _historyIndex: number = 0
     /** Current X position of the cursor while editing a command. */
-    private _cursorIndex = 0;
+    private _cursorIndex = 0
     /** Stores the time of the last exit call to detect double CTRL+C for exitting the app. */
-    private _lastExitCall = 0;
+    private _lastExitCall = 0
 
     private _transferFromHistory() {
-        const toIndex = this._history.length - 1;
-        const fromIndex = this._historyIndex;
-        this._history[toIndex] = [...this._history[fromIndex]];
-        this._historyIndex = toIndex;
+        const toIndex = this._history.length - 1
+        const fromIndex = this._historyIndex
+        this._history[toIndex] = [...this._history[fromIndex]]
+        this._historyIndex = toIndex
     }
     /** 
      * Removes last command from history if it's the exact same as the previous one. 
@@ -97,9 +98,9 @@ export class Prompt extends EventEmitter {
      */
     private _removeDuplicatedHistory() {
         try {
-            const iLast = this._history.length - 1, iPrev = this._history.length - 2;
+            const iLast = this._history.length - 1, iPrev = this._history.length - 2
             if (this._history[iLast].join('') === this._history[iPrev].join(''))
-                this._history.pop();
+                this._history.pop()
         } 
         catch {}
     }
@@ -109,21 +110,22 @@ export class Prompt extends EventEmitter {
 
     /** Handle any non-special keys */
     private KEY_DEFAULT(key: KeyInput) {
-        if (this._isEditingOldCommand()) this._transferFromHistory();
-        const chars = this._getLastCommand();
-        if (chars.length < MAX_CHARS && !DISABLED_SEQ.includes(key.sequence)) chars.push(key.sequence);   
+        if (this._isEditingOldCommand()) this._transferFromHistory()
+        const chars = this._getLastCommand()
+        if (chars.length < MAX_CHARS && !DISABLED_SEQ.includes(key.sequence)) chars.push(key.sequence)  
     }
     /** Submits a command. */
     private KEY_ENTER() {
         if (this._isEditingOldCommand()) this._transferFromHistory()
 
-        const args = this._getLastCommand().join('').split(' ');
-        this.emit('command', args);
+        const args = this._getLastCommand().join('').split(' ')
+        const command = args.shift()
+        this.emit(command!, args)
 
         if (this._getLastCommand().length > 0) {
-            this._removeDuplicatedHistory();
-            this._history.push([]);
-            this._historyIndex = this._history.length - 1;
+            this._removeDuplicatedHistory()
+            this._history.push([])
+            this._historyIndex = this._history.length - 1
         }
 
         console.log(this._history)
@@ -162,14 +164,14 @@ export class Prompt extends EventEmitter {
 
     /** Handles the exit sequence */
     private SEQUENCE_EXIT() {
-        const now = Date.now();
-        if (now - CTRL_C_ACCEPT_DELAY < this._lastExitCall) this.emit('exit');
-        this._lastExitCall = now;
+        const now = Date.now()
+        if (now - CTRL_C_ACCEPT_DELAY < this._lastExitCall) this.emit('exit')
+        this._lastExitCall = now
     }
    
 }
 
 export default Prompt
 
-const testTerminal = new Prompt()
-testTerminal.on('exit', process.exit)
+// const testTerminal = new Prompt()
+// testTerminal.on('exit', process.exit)

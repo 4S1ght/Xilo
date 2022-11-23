@@ -1,10 +1,10 @@
 
 
-import EventProxy from "./EventProxy.class.js";
-import Process from './Process.class.js';
-import * as util from '../Utils.js';
+import EventProxy from "./EventProxy.class.js"
+import Process from './Process.class.js'
+import * as util from '../Utils.js'
 
-import type * as CNF from '../../../types/config';
+import type * as CNF from '../../../types/config'
 
 
 export interface ProcessManager {
@@ -18,12 +18,12 @@ export interface ProcessManager {
 export class ProcessManager extends EventProxy<'spawn' | 'close' | 'kill' | 'restart' | 'kill-error' | 'restart-error'> {
 
     public processes: Record<string, Process> = {}
-    public config: CNF.Config;
+    public config: CNF.Config
 
     constructor(config: CNF.Config) {
-        super();
-        this.config = {...ProcessManager.defaultConfig, ...config};
-        ProcessManager.instance = this;
+        super()
+        this.config = {...ProcessManager.defaultConfig, ...config}
+        ProcessManager.instance = this
     }
 
     public static instance: ProcessManager
@@ -49,15 +49,15 @@ export class ProcessManager extends EventProxy<'spawn' | 'close' | 'kill' | 'res
         const spawnProcess = (name: string) => new Promise<Process>((resolve) => {
             if (callback) callback(this.processes[name])
             this.processes[name].on('spawn', () => {
-                this.emitCustom('spawn', name);
-                resolve(this.processes[name]);
-            });
-            this.processes[name].spawn();
+                this.emitCustom('spawn', name)
+                resolve(this.processes[name])
+            })
+            this.processes[name].spawn()
         })
 
         for (const process in this.processes) {
-            await spawnProcess(process);
-            await util.wait((this.config.settings || {} as any).scriptSpawnDelay || 500);
+            await spawnProcess(process)
+            await util.wait((this.config.settings || {} as any).scriptSpawnDelay || 500)
         }
         
     }
@@ -65,5 +65,5 @@ export class ProcessManager extends EventProxy<'spawn' | 'close' | 'kill' | 'res
 }
 
 export default function createProcessManager(config: CNF.Config) {
-    return ProcessManager.instance || new ProcessManager(config);
+    return ProcessManager.instance || new ProcessManager(config)
 }
