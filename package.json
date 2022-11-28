@@ -9,14 +9,14 @@
     "xilo": "./build/bin/cli/bin.js"
   },
   "dependencies": {
-    "@types/node": "^18.8.3",
     "chalk": "^5.1.2",
     "commander": "^9.4.1",
     "tree-kill": "^1.2.2"
   },
   "scripts": {
     "xilo": "node ./build/bin/cli/bin.js",
-    "tsc": "tsc -w"
+    "tsc": "tsc -w",
+    "test-terminal": "node ./tests/live-terminal.js"
   },
   "repository": {
     "type": "git",
@@ -30,5 +30,8 @@
   "bugs": {
     "url": "https://github.com/4S1ght/Xilo/issues"
   },
-  "homepage": "https://github.com/4S1ght/Xilo#readme"
+  "homepage": "https://github.com/4S1ght/Xilo#readme",
+  "devDependencies": {
+    "@types/node": "^18.11.9"
+  }
 }

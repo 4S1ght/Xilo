@@ -1,6 +1,9 @@
 
 import readline from "readline"
 import EventEmitter from "events"
+import c from 'chalk'
+
+let i = 0
 
 interface KeyInput { 
     sequence: string
@@ -10,29 +13,52 @@ interface KeyInput {
     shift:    boolean
 }
 
-/** 
- * Max chars in one command  
- * ! IMPORTANT: will change to process.stdout.columns due to bugs while char count exceeds the number of columns
- * ! This will also allow for horizontal scrolling.
- */
-const MAX_CHARS = 70
+/** Creates a color palette for submited terminal commands */
+function createPalette(...colors: string[]) {
+    return {
+        stat:       c.hex(colors[0]),
+        statBG:     c.bgHex(colors[0]),
+        content:    c.hex(colors[1]),
+        contentBG:  c.bgHex(colors[1]),
+        text:       c.hex(colors[2])
+    }
+}
+
+const getStdColumns = () => process.stdout.columns - 1
+
 /** Delay between CTRL+C to quit the application. */
 const CTRL_C_ACCEPT_DELAY = 300
 /** Keys/sequences not accepted by KEY_DEFAULT handler */
 const DISABLED_SEQ = ['\r', '\x03']
 
-export interface Prompt {
+export interface LiveTerminal {
+    on(eventName: string, listener: (args: string[]) => void): this
     on(eventName: 'exit', listener: () => any): this
-    on(eventName: 'command', listener: (args: string[]) => void): this
 }
-export class Prompt extends EventEmitter {
+export class LiveTerminal extends EventEmitter {
 
     constructor() {
         super()
         readline.emitKeypressEvents(process.stdin)
         process.stdin.setRawMode(true)
-        this._startInputCapture()
+        this._startInputCapture() 
     }
+
+    private cOK = createPalette(
+        "#70CC78",
+        "#35863b",
+        "#ffffff"
+    )
+    private cERR = createPalette(
+        "#dd5e5e",
+        "#9b4a4a",
+        "#e9d7d7"
+    )
+    private cPASS = createPalette(
+        "#6297c9",
+        "rgb(63, 89, 146)",
+        "#c6d3df"
+    )
 
     private _startInputCapture() {
         process.stdin.on('keypress', (string, key: KeyInput) => {
@@ -49,7 +75,7 @@ export class Prompt extends EventEmitter {
 
             else                                    this.KEY_DEFAULT(key)
 
-            this._displayCommandString(this._getCurrentCommand().join(''))
+            this._displayCommandString()
 
         })
     }
@@ -60,10 +86,21 @@ export class Prompt extends EventEmitter {
      * Due to random IO from child processes the string might be duplicated across multiple
      * lines if it's being edited while something is being printed out to the console.
      */
-    private _displayCommandString(text?: string) {
+    private _displayCommandString() {
+
+        const text = this._getCurrentCommand()
+            .slice(this._xOffset, this._xOffset + getStdColumns())
+            .join('')
+
+        const finish = () => readline.cursorTo(process.stdout, this._cursorIndex - this._xOffset, process.stdout.rows)
+
         readline.cursorTo(process.stdout, 0, process.stdout.rows, () => {
             readline.clearLine(process.stdout, 0, () => {
-                process.stdout.write(text || '')
+                if (this._finishedCommand) {
+                    console.log(this._finishedCommand + "\n")
+                    this._finishedCommand = ''
+                }
+                else process.stdout.write(text, finish)
             })
         })
     }
@@ -80,9 +117,17 @@ export class Prompt extends EventEmitter {
     /** Current position in the history */
     private _historyIndex: number = 0
     /** Current X position of the cursor while editing a command. */
-    private _cursorIndex = 0
+    private _cursorIndex: number = 0
+    /** Determines x-axis scrolling offset if a command is longer than total amount of columns. */
+    private _xOffset: number = 0
     /** Stores the time of the last exit call to detect double CTRL+C for exitting the app. */
-    private _lastExitCall = 0
+    private _lastExitCall: number = 0
+    /** Caches cursor index and offset when navigating between commands in case the used wants to go back to the current one. */
+    private _indexAndOffsetCache: [number, number] = [0, 0]
+    /** Stores a the finished command to be displayed when the user presses ENTER. */
+    private _finishedCommand: string = ''
+    /** Determines command execution status - OK, error or passed to a hidden shell. */
+    private _commandExecStatus: "cOK" | "cERR" | "cPASS" | undefined
 
     private _transferFromHistory() {
         const toIndex = this._history.length - 1
@@ -105,6 +150,22 @@ export class Prompt extends EventEmitter {
         catch {}
     }
 
+    /**
+     * Sets the proper cursor position and x offset for navifating up/down in history
+     */
+    private _setIndexAndOffset() {
+        if (this._isEditingOldCommand()) {
+            const command = this._getCurrentCommand()
+            this._cursorIndex = command.length
+            const offset = command.length - getStdColumns()
+            this._xOffset = Math.max(0, offset)
+        }
+        else {
+            this._cursorIndex = this._indexAndOffsetCache[0]
+            this._xOffset     = this._indexAndOffsetCache[1]
+        }
+    }
+
     // KEYS
     // =========================================
 
@@ -112,14 +173,23 @@ export class Prompt extends EventEmitter {
     private KEY_DEFAULT(key: KeyInput) {
         if (this._isEditingOldCommand()) this._transferFromHistory()
         const chars = this._getLastCommand()
-        if (chars.length < MAX_CHARS && !DISABLED_SEQ.includes(key.sequence)) chars.push(key.sequence)  
+        if (!DISABLED_SEQ.includes(key.sequence)) {
+            chars.splice(this._cursorIndex, 0, key.sequence)
+            this._cursorIndex++
+            if (chars.length > getStdColumns()) this._xOffset++
+        }
     }
+
     /** Submits a command. */
     private KEY_ENTER() {
         if (this._isEditingOldCommand()) this._transferFromHistory()
 
-        const args = this._getLastCommand().join('').split(' ')
+        let string = this._getLastCommand().join('')
+        if (string.replace(/ |\t/g, '').length === 0) return
+        
+        const args = string.split(' ')
         const command = args.shift()
+
         this.emit(command!, args)
 
         if (this._getLastCommand().length > 0) {
@@ -128,15 +198,41 @@ export class Prompt extends EventEmitter {
             this._historyIndex = this._history.length - 1
         }
 
-        console.log(this._history)
+        // Reset cursor index and offser
+        this._cursorIndex = 0
+        this._xOffset = 0
+
+        // Get the finished command ready to be displayed.
+        const cp = this[this._commandExecStatus || 'cOK']
+        
+        if (string.length + 6 > getStdColumns()) {
+            string = string.slice(0, getStdColumns() - 7) + '...'
+        }
+
+        this._finishedCommand = 
+            cp.statBG('  ') + cp.stat(cp.contentBG('\uE0B0')) +
+            cp.text(cp.contentBG(` ${string}`)) + cp.content('\uE0B0') + "\x1b[0m"
     }
+
     /** Removes a character behind the cursor. */
     private KEY_BACKSPACE() {
-
+        if (this._isEditingOldCommand()) this._transferFromHistory()
+        const chars = this._getLastCommand()
+        if (chars.length > 0 && this._cursorIndex > 0) {
+            chars.splice(this._cursorIndex-1, 1)
+            this._cursorIndex--
+        }
+        if (chars.length > 0 && this._xOffset > 0) this._xOffset--
     }
+
     /** Removes a character in front of the cursor */
     private KEY_DELETE() {
-
+        if (this._isEditingOldCommand()) this._transferFromHistory()
+        const chars = this._getLastCommand()
+        if (this._cursorIndex < chars.length) {
+            chars.splice(this._cursorIndex, 1)
+        }
+        if (chars.length > 0 && this._xOffset > 0) this._xOffset--
     }
 
     // CURSOR KEYS
@@ -144,19 +240,31 @@ export class Prompt extends EventEmitter {
 
     /** Goes UP, or "back" in history. */
     private KEY_UP() {
-
+        // Save current commands cursor and offset position before navigating
+        if (!this._isEditingOldCommand()) this._indexAndOffsetCache = [ this._cursorIndex, this._xOffset ]
+        if (this._historyIndex > 0) this._historyIndex--
+        this._setIndexAndOffset()
     }
+    
     /** Goes DOWN, or "forward" in history. */
     private KEY_DOWN() {
-
+        if (this._historyIndex < this._history.length - 1) this._historyIndex++
+        this._setIndexAndOffset()
     }
+
     /** Changes the X position of the cursor while typing in the command. */
     private KEY_LEFT() {
-
+        const currentX = this._cursorIndex
+        if (currentX > 0) this._cursorIndex--
+        else if (this._xOffset > 0) this._xOffset--
     }
+
     /** Changes the X position of the cursor while typing in the command. */
     private KEY_RIGHT() {
-        
+        const currentX = this._cursorIndex
+        const command = this._getCurrentCommand()
+        if (currentX < command.length) this._cursorIndex++
+        if (currentX === getStdColumns() && command.length > currentX + this._xOffset) this._xOffset--
     }
 
     // KEY SEQUENCES
@@ -171,7 +279,4 @@ export class Prompt extends EventEmitter {
    
 }
 
-export default Prompt
-
-// const testTerminal = new Prompt()
-// testTerminal.on('exit', process.exit)
+export default LiveTerminal
