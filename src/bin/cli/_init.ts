@@ -1,11 +1,11 @@
 
 import path from "path"
 import fs from "fs"
-import c from "chalk"
 import { program } from "commander"
 import { Terminal } from "../Terminal.js"
 import * as cst from "../Constants.js"
 import * as util from '../Utils.js'
+import * as c from "../../colors.js"
 
 import * as url from 'url'
 const __filename = url.fileURLToPath(import.meta.url)
@@ -30,7 +30,7 @@ export default (argv: string[]) => {
             if (found && !options.force) {
                 return Terminal.error(
                     true, true,
-                    c.red(`Error: Another file already exists in this location. Use "--force" to override it.\n${c.gray('File ' + cnfPath)}`)
+                    c.red(`Error: Another file already exists in this location. Use "--force" to override it.\n${c.grey('File ' + cnfPath)}`)
                 )
             }
             if (!found) {

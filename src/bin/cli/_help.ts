@@ -4,6 +4,7 @@ import fs from 'fs'
 import path from 'path'
 import * as cst from '../Constants.js'
 import * as util from '../Utils.js'
+import * as colors from '../../colors.js'
 
 import * as url from 'url'
 const __filename = url.fileURLToPath(import.meta.url)
@@ -11,15 +12,15 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
 //
 
-const _name     = c.hex(cst.T_COLOR_H_NAME)
-const _param    = c.hex(cst.T_COLOR_H_PARAM)
-const _opt      = c.gray
+const _name     = colors.green
+const _param    = colors.green
+const _opt      = colors.grey
 
-const XILO =        c.bold.hex(cst.T_COLOR_TITLE) ("Xilo")
-const VERSION =     c.hex(cst.T_COLOR_TITLE)      (JSON.parse(fs.readFileSync(util.getAbsURL(__dirname, '../../../package.json'), 'utf-8')).version)
-const HELP_S =      c.hex(cst.T_COLOR_LINK)       ("xilo help")
-const INIT =        c.hex(cst.T_COLOR_LINK)       ("xilo init <path>")
-const PREFIX =      c.hex(cst.T_COLOR_LINK)       (cst.T_PREFIX_SMALL)
+const XILO =        colors.blue.bold("Xilo")
+const VERSION =     colors.blue     (JSON.parse(fs.readFileSync(util.getAbsURL(__dirname, '../../../package.json'), 'utf-8')).version)
+const HELP_S =      colors.green   ("xilo help")
+const INIT =        colors.green   ("xilo init <path>")
+const PREFIX =      colors.green   (cst.T_PREFIX_SMALL)
 
 const getUptime = () => process.uptime().toFixed(2) + 's'
 
@@ -27,7 +28,7 @@ const getUptime = () => process.uptime().toFixed(2) + 's'
 
 const SPLASH_MAIN = [
     ``,
-    `   ${XILO} ${VERSION}  %uptime%`,
+    `   ${XILO} ${VERSION}   %uptime%`,
     ``,
     `   ${PREFIX}  Type ${HELP_S} to list out available commands.`,
     `   ${PREFIX}  Or create a default config file with ${INIT}.`,
@@ -36,7 +37,7 @@ const SPLASH_MAIN = [
 
 const SPLASH_HELP = `
 
-${XILO} ${VERSION}  %uptime%
+${XILO} ${VERSION}   %uptime%
 
 Note: Use --help To display a list of accepted parameters for specific commands.
 __________________________________________________________________________________

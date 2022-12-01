@@ -1,5 +1,5 @@
 
-import c from 'chalk'
+import * as c from '../../colors.js'
 
 import createManager from '../class/ProrcessManager.class.js'
 import LivePrompt from '../LiveTerminal.js'
@@ -28,7 +28,7 @@ export default async function main(config: CNF.Config) {
     })
 
     // Live prompt
-    const p = new LivePrompt()
+    const p = new LivePrompt(config.terminal || {})
     setPromptCommandHandlers(p, m)
 
 }

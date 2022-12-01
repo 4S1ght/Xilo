@@ -1,11 +1,11 @@
 
 import path from "path"
 import fs from "fs"
-import c from 'chalk'
 import { Terminal } from "../Terminal.js"
 import { program } from "commander"
 import * as cst from "../Constants.js"
 import * as util from "../Utils.js"
+import * as c from '../../colors.js'
 import INIT from './program.js'
 
 import type * as CNF from "../../../types/config"
