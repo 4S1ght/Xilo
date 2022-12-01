@@ -1,5 +1,8 @@
 
+// Misc
+export const SUPPORTED_PLATFORMS = ['win32', 'darwin', 'linux']
 
+// Terminal
 export const T_PREFIX_BIG   = 'Xilo >'
 export const T_PREFIX_SMALL = '>'
 

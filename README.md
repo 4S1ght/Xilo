@@ -9,4 +9,5 @@ Features intended for the next version:
 - Add event emitters (file watcher, timer, CLI)
 
 ## Changelog:
-18.11.2022 - Child processes configured in xilo.config.js>processes anow spawn properly after initializing with `xilo run <config>`
+19.11.2022 - Added platform support warnings in the welcome message.  
+18.11.2022 - Child processes configured in xilo.config.js>processes anow spawn properly after initializing with `xilo run <config>`.  
