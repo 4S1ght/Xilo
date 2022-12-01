@@ -1,12 +1,12 @@
 
-import c from 'chalk';
+import * as c from '../../colors.js'
 
 import createManager from '../class/ProrcessManager.class.js'
-import LivePrompt from '../lib/LivePrompt.js'
+import LivePrompt from '../LiveTerminal.js'
 
 import type Process from '../../bin/class/Process.class'
 import type { ProcessManager } from '../class/ProrcessManager.class.js'
-import type * as CNF from "../../../types/config";
+import type * as CNF from "../../../types/config"
 
 
 
@@ -28,27 +28,18 @@ export default async function main(config: CNF.Config) {
     })
 
     // Live prompt
-    const p = new LivePrompt();
-    setPromptCommandHandlers(p, m);
+    const p = new LivePrompt(config.terminal || {})
+    setPromptCommandHandlers(p, m)
 
 }
 
 function setProcessEventMessages(process: Process) {
-
-    const close      = () =>           console.log(c.red(`Process "${process.name}" closed with code "${process.child.exitCode}".`))
-    const kill       = () =>           console.log(c.red(`Killed process "${process.name}".`))
-    const killErr    = (err: Error) => console.log(c.red(`An error accurd while attempting to kill "${process.name}".`), err)
-    const restart    = () =>           console.log(c.yellow(`Restarted process "${process.name}".`))
-    const restartErr = (err: Error) => console.log(c.red(`An error accured while attemptting to restart "${process.name}".`), err)
-    const spawn      = () =>           console.log(c.green(`Process "${process.name}" running.`))
-    
-    process.on('close',         close)
-    process.on('kill',          kill)
-    process.on('kill-error',    killErr)
-    process.on('restart',       restart)
-    process.on('restart-error', restartErr)
-    process.on('spawn',         spawn)
-    
+    process.on('close',         () =>           console.log(c.red(`Process "${process.name}" closed with code "${process.child.exitCode}".`)))
+    process.on('kill',          () =>           console.log(c.red(`Killed process "${process.name}".`)))
+    process.on('kill-error',    (err: Error) => console.log(c.red(`An error accurd while attempting to kill "${process.name}".`), err))
+    process.on('restart',       () =>           console.log(c.yellow(`Restarted process "${process.name}".`)))
+    process.on('restart-error', (err: Error) => console.log(c.red(`An error accured while attemptting to restart "${process.name}".`), err))
+    process.on('spawn',         () =>           console.log(c.green(`Process "${process.name}" is running.`)))
 }
 
 function setPromptCommandHandlers(prompt: LivePrompt, manager: ProcessManager) {
@@ -57,7 +48,7 @@ function setPromptCommandHandlers(prompt: LivePrompt, manager: ProcessManager) {
         for (const name in manager.processes) {
             await manager.processes[name].kill()
         }
-        process.exit();
+        process.exit()
     })
 
     // prompt.on('command', (argv: string[]) => {

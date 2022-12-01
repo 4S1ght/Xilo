@@ -10,8 +10,14 @@ export interface Config {
     settings?: {
         /** Specifies time gaps between spawning child processes. */
         scriptSpawnDelay?: number
-        /** Specifies whether or not to log process status logs that appear after a process is spawned, killed, restarted, etc... */
-        disableProcessStatusLogs?: boolean
+    }
+    
+    /**
+     * Specifies live terminal settings.
+     */
+    terminal?: {
+        /** Sets a custom passthrough shell to execute commands that are unknown to the live terminal. */
+        shellPassthrough?: string
     }
 
     /**
@@ -28,4 +34,9 @@ export interface ProcessConfig extends cp.SpawnOptions {
     cwd?: string
     /** Specifies whether STDOUT should be ignored or piped to the main process. */
     stdout?: 'all' | 'ignore'
+}
+
+export interface LiveTerminalSettings {
+    /** If defined LiveTerminal will attempt to pass all unknown commands to the provided shell process. */
+    shellPassthrough?: string
 }

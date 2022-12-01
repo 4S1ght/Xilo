@@ -14,8 +14,11 @@
     "tree-kill": "^1.2.2"
   },
   "scripts": {
-    "xilo": "node ./build/bin/cli/bin.js",
-    "tsc": "tsc -w"
+    "tsc": "tsc -w",
+    "live-terminal": "node ./tests/live-terminal.js",
+    "bin welcome":   "node ./build/bin/cli/bin.js",
+    "bin init":      "node ./build/bin/cli/bin.js init",
+    "bin run":       "node ./build/bin/cli/bin.js run"
   },
   "repository": {
     "type": "git",

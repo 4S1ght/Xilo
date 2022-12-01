@@ -1,16 +1,16 @@
 
-import c from "chalk";
-import * as cst from "./Constants.js";
+import c from "chalk"
+import * as cst from "./Constants.js"
 
 export class Terminal {
 
     /** Adds padding around a message. */
-    private static pad = (content: string) => `\n${content}\n`;
+    private static pad = (content: string) => `\n${content}\n`
     
     /** Returns a formatted message. */
     public static formatMessage = (prefix: boolean, padding: boolean, ...content: string[]) => {
-        const message = `${prefix ? cst.T_PREFIX_BIG : ''} ${content.join(' ')}`;
-        return padding ? Terminal.pad(message) : message;
+        const message = `${prefix ? cst.T_PREFIX_BIG : ''} ${content.join(' ')}`
+        return padding ? Terminal.pad(message) : message
     }
 
     /** Displays a formatted message. */
@@ -19,8 +19,8 @@ export class Terminal {
 
     /** Returns a formatted error message */
     public static formatError = (prefix = true, padding = true, ...content: string[]) => {
-        const message = `${prefix ? cst.T_PREFIX_BIG : ''} ${c.red(content.join(' '))}`;
-        return padding ? Terminal.pad(message) : message;
+        const message = `${prefix ? cst.T_PREFIX_BIG : ''} ${c.red(content.join(' '))}`
+        return padding ? Terminal.pad(message) : message
     }
 
     /** Displays a formatted error message */

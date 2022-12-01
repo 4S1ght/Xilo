@@ -1,5 +1,5 @@
 
-import EventEmitter from "events";
+import EventEmitter from "events"
 
 /**
  * EventProxy is a class built on top of EventEmitter that adds pause/resume functionality.
