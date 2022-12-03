@@ -8,17 +8,21 @@
   "bin": {
     "xilo": "./build/bin/cli/bin.js"
   },
+  "scripts": {
+    "tsc": "tsc -w",
+    "postbuild": "echo Done.",
+    "live-terminal": "node ./tests/live-terminal.js",
+    "bin welcome": "node ./build/bin/cli/bin.js",
+    "bin init": "node ./build/bin/cli/bin.js init",
+    "bin run": "node ./build/bin/cli/bin.js run"
+  },
   "dependencies": {
     "chalk": "^5.1.2",
     "commander": "^9.4.1",
     "tree-kill": "^1.2.2"
   },
-  "scripts": {
-    "tsc": "tsc -w",
-    "live-terminal": "node ./tests/live-terminal.js",
-    "bin welcome":   "node ./build/bin/cli/bin.js",
-    "bin init":      "node ./build/bin/cli/bin.js init",
-    "bin run":       "node ./build/bin/cli/bin.js run"
+  "devDependencies": {
+    "@types/node": "^18.11.9"
   },
   "repository": {
     "type": "git",
@@ -32,8 +36,5 @@
   "bugs": {
     "url": "https://github.com/4S1ght/Xilo/issues"
   },
-  "homepage": "https://github.com/4S1ght/Xilo#readme",
-  "devDependencies": {
-    "@types/node": "^18.11.9"
-  }
+  "homepage": "https://github.com/4S1ght/Xilo#readme"
 }

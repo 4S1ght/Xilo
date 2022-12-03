@@ -6,14 +6,9 @@ import { program } from "commander"
 import * as cst from "../Constants.js"
 import * as util from "../Utils.js"
 import * as c from '../../colors.js'
-import INIT from './program.js'
+import Program from '../program/Program.class.js'
 
 import type * as CNF from "../../../types/config"
-
-import * as url from 'url'
-const __filename = url.fileURLToPath(import.meta.url)
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
-
 
 export default (argv: string[]) => {
 
@@ -28,12 +23,13 @@ export default (argv: string[]) => {
             const [configFile, found] = util.getConfigPath(configPath)
             if (!found) return Terminal.error(true, true, c.red(`Error: Missing configuration file. Use "xilo init <config>" to create a basic template.`))
             
-            const config: CNF.Config = (await import(util.getAbsURL(configFile!).href)).default
-            INIT(config)
+            const config = await import(util.getAbsURL(configFile!).href)
+            const program = new Program(config.exports || config.default || config)
+            await program.start()
             
         })
 
-    program.parse(['_', '_', ...argv])
+    program.parse(['_', 'run', ...argv])
 
 }
 

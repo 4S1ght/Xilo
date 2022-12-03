@@ -3,8 +3,8 @@ import readline from "readline"
 import EventEmitter from "events"
 import cp from 'child_process'
 
-import * as c from '../colors.js'
-import type { LiveTerminalSettings } from '../../types/config';
+import * as c from '../../colors.js'
+import type { LiveTerminalSettings } from '../../../types/config';
 
 // =========================================
 
@@ -62,6 +62,9 @@ export class LiveTerminal extends Events {
     constructor(p: LiveTerminalSettings) {
         super()
         this.p = p
+    }
+
+    public start(): void {
         readline.emitKeypressEvents(process.stdin)
         process.stdin.setRawMode(true)
         this._startInputCapture() 

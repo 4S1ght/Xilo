@@ -22,25 +22,30 @@ export default (argv: string[]) => {
             writeOut: (str) => process.stdout.write(str),
             writeErr: (str) => process.stdout.write(Terminal.formatError(true, true, str.replace('error:', 'Error:').replace("'\n", "' ")))
         })
-        .action((config: string | undefined, options: { force: boolean }) => {
+        .action((config: string | undefined, options: { force: boolean, template: string }) => {
 
             const cnfPath = util.chooseConfigCreationPath(config)
-            const found = fs.existsSync(cnfPath)
+            const cnfFound = fs.existsSync(cnfPath)
 
-            if (found && !options.force) {
+            if (cnfFound && !options.force) {
                 return Terminal.error(
                     true, true,
                     c.red(`Error: Another file already exists in this location. Use "--force" to override it.\n${c.grey('File ' + cnfPath)}`)
                 )
             }
-            if (!found) {
+            if (!cnfFound) {
                 fs.mkdirSync(path.dirname(cnfPath), { recursive: true })
             }
+
+            fs.copyFileSync(
+                path.join(__dirname, `../../../templates/default-config.mjs`),
+                path.join(cnfPath)
+            )
     
-            fs.writeFileSync(cnfPath!, cst.CNF_TEMPLATE, 'utf-8')
-            Terminal.message(true, true, c.green(`${options.force && found ? 'Overwritten' : 'Created'} config file in ` + c.underline(cnfPath)))
+            Terminal.message(true, true, c.green(`${options.force && cnfFound ? 'Overwritten' : 'Created'} config file in ` + c.underline(cnfPath)))
     
         })
 
-    program.parse(['_', '_', ...argv])
+    program.parse(['_', 'init', ...argv])
+
 }

@@ -26,7 +26,7 @@ export const chooseConfigCreationPath = (file?: string) => {
 
     // Append the default "xilo.config.js" file name to the path if it doesn't
     // point to a specific file.
-    if ( (!fs.existsSync(filePath) || fs.lstatSync(filePath).isDirectory()) && path.extname(file) !== ".js" )
+    if ( (!fs.existsSync(filePath) || fs.lstatSync(filePath).isDirectory()) && path.extname(file) !== ".mjs" )
         filePath = path.join(filePath, cst.CNF_FILE_NAME)
     
     // Return the file path if a TS config has been found
@@ -44,7 +44,7 @@ export const getConfigPath = (file?: string): [string, boolean] => {
         ? file
         : path.join(process.cwd(), file)
         
-    if (path.extname(filePath) === '.js')
+    if (path.extname(filePath) === '.mjs')
         return [filePath, fs.existsSync(filePath)]
 
     if (!path.extname(filePath)) {
@@ -52,7 +52,7 @@ export const getConfigPath = (file?: string): [string, boolean] => {
         if (fs.existsSync(JS)) return [JS, true]
     }
     
-    return [filePath, fs.existsSync(filePath) && path.extname(filePath) === '.js']
+    return [filePath, fs.existsSync(filePath) && path.extname(filePath) === '.mjs']
 
 }
 

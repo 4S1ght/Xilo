@@ -23,7 +23,7 @@ const INIT =        colors.green   ("xilo init <path>")
 const PREFIX =      colors.green   (cst.T_PREFIX_SMALL)
 
 const getUptime = () => process.uptime().toFixed(2) + 's'
-
+    
 //
 
 const SPLASH_MAIN = [
@@ -37,7 +37,7 @@ const SPLASH_MAIN = [
 
 const PLATFORM_SUPPORT = [
     `   WARNING: Officially supported platforms include: ${cst.SUPPORTED_PLATFORMS.join(', ')}.`,
-    `   "${process.platform}" is not supported and issues might appear.`,
+    `   "${process.platform}" is not supported and issues might appear during operation.`,
     ``
 ]
 
@@ -48,12 +48,13 @@ ${XILO} ${VERSION}   %uptime%
 Note: Use --help To display a list of accepted parameters for specific commands.
 __________________________________________________________________________________
 
-init   <config>      Creates a template config file in a specified location.
-                     Defaults to _./${cst.CNF_FILE_NAME}_
-       --force, -f   *Foce the template file.*
+init   <config>         Creates a template config file in a specified location.
+                        Defaults to _./${cst.CNF_FILE_NAME}_
+       --force, -f      *Foce the template file.*
+       --template, -t   *Specifies configuration file boilerplate.*
 
-run    <config>      Starts the manager using the specified config file.
-                     Defaults to _./${cst.CNF_FILE_NAME}_
+run    <config>         Starts the manager using the specified config file.
+                        Defaults to _./${cst.CNF_FILE_NAME}_
 `
 
 //
@@ -75,7 +76,9 @@ export default (disableHelp: boolean) => {
             .replace(/--(?<x>[A-z]+)*/g,             _opt('--$1'))
             .replace(/-(?<x>[A-z]+)*/g,              _opt('-$1'))
 
-        console.log(formattedText.replace("%uptime%", getUptime()))
+            .replace("%uptime%", getUptime())
+
+        console.log(formattedText)
     }
 
 }
