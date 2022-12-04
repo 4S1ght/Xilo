@@ -24,7 +24,7 @@ old/
 tests/*
 src/lib/placeholder.ts
 
-xilo.config.js
+xilo.config.mjs
 
 # Other
 *.local

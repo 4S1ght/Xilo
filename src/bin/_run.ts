@@ -1,14 +1,14 @@
 
 import path from "path"
 import fs from "fs"
-import { Terminal } from "../Terminal.js"
+import { Terminal } from "../other/Terminal.js"
 import { program } from "commander"
-import * as cst from "../Constants.js"
-import * as util from "../Utils.js"
-import * as c from '../../colors.js'
+import * as cst from "../other/Constants.js"
+import * as util from "../other/Utils.js"
+import * as c from '../other/Colors.js'
 import Program from '../program/Program.class.js'
 
-import type * as CNF from "../../../types/config"
+import type * as CNF from "../../types/config"
 
 export default (argv: string[]) => {
 

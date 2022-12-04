@@ -17,7 +17,7 @@ export default {
         // Process name and its configuration
         c1: {
             // Shell command that summons a CLI app or a script.
-            command: "node tests/counter.js",
+            command: "echo Echo from the child process!",
             // Specifies the current working directory for the spawned process.
             cwd: "./",
             // Specifies whether STDOUT should be ignored or piped to the main process.

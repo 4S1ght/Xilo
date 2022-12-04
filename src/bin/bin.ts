@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import path from 'path'
-import { Terminal } from '../Terminal.js'
-import * as util from '../Utils.js'
-import * as c from '../../colors.js'
+import { Terminal } from '../other/Terminal.js'
+import * as util from '../other/Utils.js'
+import * as c from '../other/Colors.js'
 
 import * as url from 'url'
 const __filename = url.fileURLToPath(import.meta.url)

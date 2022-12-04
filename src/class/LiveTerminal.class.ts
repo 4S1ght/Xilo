@@ -3,8 +3,8 @@ import readline from "readline"
 import EventEmitter from "events"
 import cp from 'child_process'
 
-import * as c from '../../colors.js'
-import type { LiveTerminalSettings } from '../../../types/config';
+import * as c from '../other/Colors.js'
+import type { LiveTerminalSettings } from '../../types/config';
 
 // =========================================
 
@@ -51,7 +51,7 @@ const DISABLED_SEQ = ['\r', '\x03', '\x1B']
 
 
 export interface LiveTerminal {
-    on(eventName: string, listener: (args: string[]) => void): this
+    on(eventName: string, listener: (...args: string[]) => void): this
     on(eventName: 'exit', listener: () => any): this
 }
 export class LiveTerminal extends Events {
@@ -157,9 +157,9 @@ export class LiveTerminal extends Events {
     /** Stores a the finished command to be displayed when the user presses ENTER. */
     private _finishedCommand: string = ''
 
-    public WARN  = (msg: string) => console.log(`${c.yellowBG(' WARN')}${c.yellow(`\uE0B0 ${msg}`)}`)
-    public ERROR = (msg: string) => console.log(`${c.redBG(' ERROR')}${c.red(`\uE0B0 ${msg}`)}`)
-    public INFO  = (msg: string) => console.log(`${c.blueBG(' INFO')}${c.blue(`\uE0B0 ${msg}`)}`)
+    public WARN  = (msg: string) => console.log(`${c.yellowBG(' WARN ')} ${c.yellow(msg)}`)
+    public ERROR = (msg: string) => console.log(`${c.redBG(' ERROR ')} ${c.red(msg)}`)
+    public INFO  = (msg: string) => console.log(`${c.blueBG(' INFO ')} ${c.blue(msg)}`)
 
     private _transferFromHistory(): void {
         const toIndex = this._history.length - 1
@@ -276,9 +276,14 @@ export class LiveTerminal extends Events {
             string = string.slice(0, getStdColumns() - 7) + '...'
         }
 
+        // Requires 3th party fonts to render the message
+        // this._finishedCommand = 
+        //     cp.statBG('  ') + cp.stat(cp.contentBG('\uE0B0')) +
+        //     cp.text(cp.contentBG(` ${string}`)) + cp.content('\uE0B0') + "\x1b[0m"
+
+        // Use a general message that all terminals should be able to render correctly.
         this._finishedCommand = 
-            cp.statBG('  ') + cp.stat(cp.contentBG('\uE0B0')) +
-            cp.text(cp.contentBG(` ${string}`)) + cp.content('\uE0B0') + "\x1b[0m"
+            cp.stat(`> ${string}`)
 
     }
 

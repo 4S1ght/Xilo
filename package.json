@@ -6,11 +6,10 @@
   "license": "GPL-3.0",
   "type": "module",
   "bin": {
-    "xilo": "./build/bin/cli/bin.js"
+    "xilo": "./build/bin/bin.js"
   },
   "scripts": {
     "tsc": "tsc -w",
-    "postbuild": "echo Done.",
     "live-terminal": "node ./tests/live-terminal.js",
     "bin welcome": "node ./build/bin/cli/bin.js",
     "bin init": "node ./build/bin/cli/bin.js init",

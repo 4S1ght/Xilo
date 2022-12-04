@@ -2,9 +2,9 @@
 import c from 'chalk'
 import fs from 'fs'
 import path from 'path'
-import * as cst from '../Constants.js'
-import * as util from '../Utils.js'
-import * as colors from '../../colors.js'
+import * as cst from '../other/Constants.js'
+import * as util from '../other/Utils.js'
+import * as colors from '../other/Colors.js'
 
 import * as url from 'url'
 const __filename = url.fileURLToPath(import.meta.url)

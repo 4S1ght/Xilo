@@ -2,10 +2,10 @@
 import path from "path"
 import fs from "fs"
 import { program } from "commander"
-import { Terminal } from "../Terminal.js"
-import * as cst from "../Constants.js"
-import * as util from '../Utils.js'
-import * as c from "../../colors.js"
+import { Terminal } from "../other/Terminal.js"
+import * as cst from "../other/Constants.js"
+import * as util from '../other/Utils.js'
+import * as c from "../other/Colors.js"
 
 import * as url from 'url'
 const __filename = url.fileURLToPath(import.meta.url)
@@ -38,7 +38,7 @@ export default (argv: string[]) => {
             }
 
             fs.copyFileSync(
-                path.join(__dirname, `../../../templates/default-config.mjs`),
+                path.join(__dirname, `../../templates/default-config.mjs`),
                 path.join(cnfPath)
             )
     
