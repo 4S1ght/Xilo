@@ -1,7 +1,7 @@
 
 import readline from "readline"
-import EventEmitter from "events"
 import cp from 'child_process'
+import Terminal from "../other/Terminal.js";
 
 import * as c from '../other/Colors.js'
 import type { LiveTerminalSettings } from '../types/config';
@@ -120,7 +120,7 @@ export class LiveTerminal extends Events {
     private _attachPassthroughShell(hideWarning?: boolean) {
         return new Promise<void>((resolve, reject) => {
             if (this.p.shellPassthrough) {
-                if (!hideWarning) this.WARN(`Shell passthrough has been enabled (${this.p.shellPassthrough})`)
+                if (!hideWarning) Terminal.WARN(`Shell passthrough has been enabled (${this.p.shellPassthrough})`)
                 try {
                     this.shell = cp.spawn(this.p.shellPassthrough!, {
                         stdio: ['pipe', 'inherit', 'inherit']
@@ -157,10 +157,6 @@ export class LiveTerminal extends Events {
     /** Stores a the finished command to be displayed when the user presses ENTER. */
     private _finishedCommand: string = ''
 
-    public WARN  = (msg: string) => console.log(`${c.yellowBG(' WARN ')} ${c.yellow(msg)}`)
-    public ERROR = (msg: string) => console.log(`${c.redBG(' ERROR ')} ${c.red(msg)}`)
-    public INFO  = (msg: string) => console.log(`${c.blueBG(' INFO ')} ${c.blue(msg)}`)
-
     private _transferFromHistory(): void {
         const toIndex = this._history.length - 1
         const fromIndex = this._historyIndex
@@ -196,12 +192,12 @@ export class LiveTerminal extends Events {
         else {
             this._cursorIndex = this._indexAndOffsetCache[0]
             this._xOffset     = this._indexAndOffsetCache[1]
-        }
+        }   
     }
 
     private _showCommandError(command: string, args: string[], error: Error): void {
         const _args = args.join(' ')
-        console.log(c.red(`An error had accured after calling the command handler for "${command}${_args ? ' '+_args : ''}":`))
+        Terminal.ERROR(`An error had accured after calling the command handler for "${command}${_args ? ' '+_args : ''}":`)
         console.log(error)
     }
 
@@ -354,7 +350,7 @@ export class LiveTerminal extends Events {
         if (this.shell) {
             this.shell.kill("SIGTERM")
             await this._attachPassthroughShell(true)
-            this.INFO(`Restarted ${this.p.shellPassthrough}`)
+            Terminal.INFO(`Restarted ${this.p.shellPassthrough}`)
         }
     }
    

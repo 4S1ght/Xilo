@@ -4,16 +4,12 @@ import path from "path"
 import * as cst from "./Constants.js"
 import url from 'url'
 
-
-
 /**
  * Creates a URL for programmatically loading modules and files
  */
 export const getAbsURL = (...module: string[]) => {
     return url.pathToFileURL(path.join(...module))
 }
-
-
 
 export const chooseConfigCreationPath = (file?: string) => {
 
@@ -36,8 +32,6 @@ export const chooseConfigCreationPath = (file?: string) => {
     
     return filePath
 }
-
-
 
 export const getConfigPath = (file?: string): [string, boolean] => {
 
@@ -76,8 +70,6 @@ export const wait = (time: number) =>
  */
 export const isError = (err: unknown): err is Error => 
     err instanceof Error
-
-
 
 /**
  * fs.watch can sometimes trigger more than once in specific cases.

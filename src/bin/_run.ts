@@ -1,7 +1,7 @@
 
 import path from "path"
 import fs from "fs"
-import { Terminal } from "../other/Terminal.js"
+import Terminal from "../other/Terminal.js"
 import { program } from "commander"
 import * as cst from "../other/Constants.js"
 import * as util from "../other/Utils.js"
@@ -16,12 +16,12 @@ export default (argv: string[]) => {
         .argument('[config]', 'Configuration file location')
         .configureOutput({
             writeOut: (str) => process.stdout.write(str),
-            writeErr: (str) => process.stdout.write(Terminal.formatError(true, true, str.replace('error:', 'Error:').replace("'\n", "' ")))
+            writeErr: (str) => process.stdout.write(Terminal.formatStaticError(true, true, str.replace('error:', 'Error:').replace("'\n", "' ")))
         })
         .action(async (configPath: string) => {
             
             const [configFile, found] = util.getConfigPath(configPath)
-            if (!found) return Terminal.error(true, true, c.red(`Error: Missing configuration file. Use "xilo init <config>" to create a basic template.`))
+            if (!found) return Terminal.staticError(true, true, c.red(`Error: Missing configuration file. Use "xilo init <config>" to create a basic template.`))
             
             const config = await import(util.getAbsURL(configFile!).href)
             const program = new Program(config.exports || config.default || config)

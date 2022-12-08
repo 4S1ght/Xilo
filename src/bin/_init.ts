@@ -2,7 +2,7 @@
 import path from "path"
 import fs from "fs"
 import { program } from "commander"
-import { Terminal } from "../other/Terminal.js"
+import Terminal from "../other/Terminal.js"
 import * as cst from "../other/Constants.js"
 import * as util from '../other/Utils.js'
 import * as c from "../other/Colors.js"
@@ -20,7 +20,7 @@ export default (argv: string[]) => {
         .showSuggestionAfterError(true)
         .configureOutput({
             writeOut: (str) => process.stdout.write(str),
-            writeErr: (str) => process.stdout.write(Terminal.formatError(true, true, str.replace('error:', 'Error:').replace("'\n", "' ")))
+            writeErr: (str) => process.stdout.write(Terminal.formatStaticError(true, true, str.replace('error:', 'Error:').replace("'\n", "' ")))
         })
         .action((config: string | undefined, options: { force: boolean, template: string }) => {
 
@@ -28,7 +28,7 @@ export default (argv: string[]) => {
             const cnfFound = fs.existsSync(cnfPath)
 
             if (cnfFound && !options.force) {
-                return Terminal.error(
+                return Terminal.staticError(
                     true, true,
                     c.red(`Error: Another file already exists in this location. Use "--force" to override it.\n${c.grey('File ' + cnfPath)}`)
                 )
@@ -42,7 +42,7 @@ export default (argv: string[]) => {
                 path.join(cnfPath)
             )
     
-            Terminal.message(true, true, c.green(`${options.force && cnfFound ? 'Overwritten' : 'Created'} config file in ` + c.underline(cnfPath)))
+            Terminal.staticMessage(true, true, c.green(`${options.force && cnfFound ? 'Overwritten' : 'Created'} config file in ` + c.underline(cnfPath)))
     
         })
 

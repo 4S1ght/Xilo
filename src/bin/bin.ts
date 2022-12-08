@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import path from 'path'
-import { Terminal } from '../other/Terminal.js'
+import Terminal from "../other/Terminal.js"
 import * as util from '../other/Utils.js'
 import * as c from '../other/Colors.js'
 
@@ -46,7 +46,7 @@ const helpModule = util.getAbsURL(__dirname, "_help.js").href;
         return (module.default || module)(moduleArgv)
     }
 
-    Terminal.error(
+    Terminal.staticError(
         true, true, 
         c.red(`Unknown command "${command}".`), 
         c.grey('\nPlease refer to the help section using the "help" command.')

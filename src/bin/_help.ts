@@ -12,15 +12,15 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
 //
 
-const _name     = colors.green
-const _param    = colors.green
+const _name     = colors.blue
+const _param    = colors.blue
 const _opt      = colors.grey
 
 const XILO =        colors.blue.bold("Xilo")
-const VERSION =     colors.blue     (JSON.parse(fs.readFileSync(util.getAbsURL(__dirname, '../../../package.json'), 'utf-8')).version)
-const HELP_S =      colors.green   ("xilo help")
-const INIT =        colors.green   ("xilo init <path>")
-const PREFIX =      colors.green   (cst.T_PREFIX_SMALL)
+const VERSION =     colors.blue   (JSON.parse(fs.readFileSync(util.getAbsURL(__dirname, '../../package.json'), 'utf-8')).version)
+const HELP_S =      colors.blue   ("xilo help")
+const INIT =        colors.blue   ("xilo init <path>")
+const PREFIX =      colors.blue   (cst.T_PREFIX_SMALL)
 
 const getUptime = () => process.uptime().toFixed(2) + 's'
     
@@ -46,7 +46,8 @@ const SPLASH_HELP = `
 ${XILO} ${VERSION}   %uptime%
 
 Note: Use --help To display a list of accepted parameters for specific commands.
-__________________________________________________________________________________
+
+-
 
 init   <config>         Creates a template config file in a specified location.
                         Defaults to _./${cst.CNF_FILE_NAME}_

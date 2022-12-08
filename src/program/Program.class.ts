@@ -6,6 +6,7 @@ import LiveTerminal from '../class/LiveTerminal.class.js'
 
 import type { ProcessManager } from '../class/ProrcessManager.class.js'
 import type * as CNF from "../types/config.js"
+import Terminal from '../other/Terminal.js'
 
 
 export default class Program {
@@ -29,7 +30,7 @@ export default class Program {
         this.setLiveTerminalCommands()
             
         await m.startEach((process) => {
-            console.log(c.green(`Starting "${process.name}"`))
+            Terminal.INFO(`Starting "${process.name}"`)
         })
         this.terminal.start()
         
@@ -38,12 +39,12 @@ export default class Program {
     private setProcessEventMessages(): void {
         for (const name in this.manager.processes) {
             const process = this.manager.processes[name]
-            process.on('close',         () =>           console.log(c.red(`Process "${process.name}" closed with code "${process.child.exitCode}".`)))
-            process.on('kill',          () =>           console.log(c.red(`Killed process "${process.name}".`)))
-            process.on('kill-error',    (err: Error) => console.log(c.red(`An error had accurd while attempting to kill "${process.name}".`), err))
-            process.on('restart',       () =>           console.log(c.yellow(`Restarted process "${process.name}".`)))
-            process.on('restart-error', (err: Error) => console.log(c.red(`An error had accured while attemptting to restart "${process.name}".`), err))
-            process.on('spawn',         () =>           console.log(c.green(`Process "${process.name}" is running.`)))
+            process.on('close',         () =>           Terminal.EXIT (`Process "${process.name}" closed with code "${process.child.exitCode}".`))
+            process.on('kill',          () =>           Terminal.EXIT (`Killed process "${process.name}".`))
+            process.on('kill-error',    (err: Error) => Terminal.ERROR(`An error had accurd while attempting to kill "${process.name}".`, err))
+            process.on('restart',       () =>           Terminal.WARN (`Restarted process "${process.name}".`))
+            process.on('restart-error', (err: Error) => Terminal.ERROR(`An error had accured while attemptting to restart "${process.name}".`, err))
+            process.on('spawn',         () =>           Terminal.INFO(`Process "${process.name}" is running.`))
         }
     }
 
