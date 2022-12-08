@@ -5,12 +5,14 @@ import * as cst from "./Constants.js"
 import url from 'url'
 
 
+
 /**
  * Creates a URL for programmatically loading modules and files
  */
 export const getAbsURL = (...module: string[]) => {
     return url.pathToFileURL(path.join(...module))
 }
+
 
 
 export const chooseConfigCreationPath = (file?: string) => {
@@ -35,6 +37,8 @@ export const chooseConfigCreationPath = (file?: string) => {
     return filePath
 }
 
+
+
 export const getConfigPath = (file?: string): [string, boolean] => {
 
     file = file || ''
@@ -57,6 +61,7 @@ export const getConfigPath = (file?: string): [string, boolean] => {
 }
 
 
+
 /**
  * Creates a time gap in code execution if when used in async functions.
  * Works similarly to `wait` in Bash, but with a specific delay.
@@ -64,8 +69,35 @@ export const getConfigPath = (file?: string): [string, boolean] => {
 export const wait = (time: number) => 
     new Promise(resolve => setTimeout(resolve, time))
 
+
+
 /**
  * Checks if the value is an error.
  */
 export const isError = (err: unknown): err is Error => 
     err instanceof Error
+
+
+
+/**
+ * fs.watch can sometimes trigger more than once in specific cases.
+ * This class ensures that the first callback fires but all the subsequent ones are blocked.
+ */
+export class Delay {
+
+    private ready = true
+    private delay: number
+    private declare timeout: NodeJS.Timeout
+
+    constructor(delay: number) {
+        this.delay = delay
+    }
+
+    public run(callback: Function): void {
+        if (this.ready) callback()
+        this.ready = false
+        clearTimeout(this.timeout)
+        setTimeout(() => this.ready = true, this.delay);
+    }
+
+}

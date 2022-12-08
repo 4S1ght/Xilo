@@ -4,7 +4,7 @@ import EventProxy from "./EventProxy.class.js"
 import Process from './Process.class.js'
 import * as util from '../other/Utils.js'
 
-import type * as CNF from '../../types/config'
+import type * as CNF from '../types/config'
 
 
 export interface ProcessManager {

@@ -8,7 +8,7 @@ import * as util from "../other/Utils.js"
 import * as c from '../other/Colors.js'
 import Program from '../program/Program.class.js'
 
-import type * as CNF from "../../types/config"
+import type * as CNF from "../types/config"
 
 export default (argv: string[]) => {
 

@@ -5,7 +5,7 @@ import createManager from '../class/ProrcessManager.class.js'
 import LiveTerminal from '../class/LiveTerminal.class.js'
 
 import type { ProcessManager } from '../class/ProrcessManager.class.js'
-import type * as CNF from "../../types/config.js"
+import type * as CNF from "../types/config.js"
 
 
 export default class Program {

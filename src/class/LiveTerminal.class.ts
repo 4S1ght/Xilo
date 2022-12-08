@@ -4,7 +4,7 @@ import EventEmitter from "events"
 import cp from 'child_process'
 
 import * as c from '../other/Colors.js'
-import type { LiveTerminalSettings } from '../../types/config';
+import type { LiveTerminalSettings } from '../types/config';
 
 // =========================================
 

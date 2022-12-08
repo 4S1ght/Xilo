@@ -1,10 +1,11 @@
 
 
-export type CommandHandlerCallback = 
+export type CommandEventCallback = 
     ((...argv: string[]) => any) |
     ((...argv: string[]) => Promise<any>)
 
-export type ExecutableHandler = (...argv: string[]) => Promise<Error | null>
+export type CommandEventHandler = (...argv: string[]) => Promise<Error | null>
+
 
 /**
  * Creates a command handler for the live terminal that is then used to capture user input and perform operations.  
@@ -25,7 +26,7 @@ export type ExecutableHandler = (...argv: string[]) => Promise<Error | null>
  * }
  * ```
  */
-export function createHandler(callback: CommandHandlerCallback): ExecutableHandler {
+export function createHandler(callback: CommandEventCallback): CommandEventHandler {
     return async (...argv: string[]) => {
         try {
             await callback(...argv)
@@ -55,7 +56,7 @@ export function createHandler(callback: CommandHandlerCallback): ExecutableHandl
  * }
  * ```
  */
-export function group(handlers: ExecutableHandler[]): ExecutableHandler {
+export function group(handlers: CommandEventCallback[]): CommandEventHandler {
     return async (...argv: string[]) => {
         for (let i = 0; i < handlers.length; i++) {
             const error = await handlers[i](...argv)
@@ -84,7 +85,7 @@ export function group(handlers: ExecutableHandler[]): ExecutableHandler {
  * ```
  * 
  */
-export function wait(time: number): ExecutableHandler {
+export function wait(time: number): CommandEventHandler {
     return () => new Promise<null>(end => {
         setTimeout(() => end(null), time);
     })

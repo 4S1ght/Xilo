@@ -1,6 +1,6 @@
 
-
-import type cp from "child_process"
+import type * as cp from 'child_process'
+import type * as Terninal from '../events/handlers/TerminalHandlers'
 
 // ================================================================
 
@@ -22,8 +22,6 @@ export interface Settings {
     
 // ================================================================
 
-import { ExecutableHandler } from "../src/tools/TerminalTools"
-
 /**
  * Specifies live terminal settings.
  */
@@ -31,7 +29,7 @@ export interface LiveTerminalSettings {
     /** If defined LiveTerminal will attempt to pass all unknown commands to the provided shell process. */
     shellPassthrough?: string
     /** Specifies an object containing handlers for different commands. */
-    handlers?: Record<string, ExecutableHandler>
+    handlers?: Record<string, Terninal.CommandEventHandler>
 }
 
 
