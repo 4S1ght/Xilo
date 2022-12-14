@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import path from 'path'
-import Terminal from "../other/Terminal.js"
+import Terminal from "../terminal/Terminal.js"
 import * as util from '../other/Utils.js'
 import * as c from '../other/Colors.js'
 

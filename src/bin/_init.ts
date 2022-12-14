@@ -2,7 +2,7 @@
 import path from "path"
 import fs from "fs"
 import { program } from "commander"
-import Terminal from "../other/Terminal.js"
+import Terminal from "../terminal/Terminal.js"
 import * as cst from "../other/Constants.js"
 import * as util from '../other/Utils.js'
 import * as c from "../other/Colors.js"

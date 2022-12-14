@@ -1,6 +1,7 @@
 
 import type * as cp from 'child_process'
 import type * as Terninal from '../events/handlers/TerminalHandlers'
+import type * as Events from '../events/Events'
 
 // ================================================================
 
@@ -29,7 +30,7 @@ export interface LiveTerminalSettings {
     /** If defined LiveTerminal will attempt to pass all unknown commands to the provided shell process. */
     shellPassthrough?: string
     /** Specifies an object containing handlers for different commands. */
-    handlers?: Record<string, Terninal.CommandEventHandler>
+    handlers?: Record<string, Events.EventHandler<Events.LiveTerminalCommandEvent>>
 }
 
 

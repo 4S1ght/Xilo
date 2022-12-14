@@ -1,6 +1,6 @@
 
-import * as c from "./Colors.js"
-import * as cst from "./Constants.js"
+import * as c from "../other/Colors.js"
+import * as cst from "../other/Constants.js"
 
 export default class Terminal {
 

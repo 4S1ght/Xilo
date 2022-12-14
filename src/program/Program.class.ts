@@ -1,12 +1,14 @@
 
-import * as c from '../other/Colors.js'
-
-import createManager from '../class/ProrcessManager.class.js'
-import LiveTerminal from '../class/LiveTerminal.class.js'
-
-import type { ProcessManager } from '../class/ProrcessManager.class.js'
+import type { ProcessManager } from '../process/ProrcessManager.class.js'
 import type * as CNF from "../types/config.js"
-import Terminal from '../other/Terminal.js'
+
+
+import createManager from '../process/ProrcessManager.class.js'
+import LiveTerminal from '../terminal/LiveTerminal.class.js'
+
+import Terminal from '../terminal/Terminal.js'
+import * as Events from '../events/Events.js'
+import * as c from '../other/Colors.js'
 
 
 export default class Program {
@@ -66,15 +68,14 @@ export default class Program {
         })
 
         // TODO: throw and stop initialisation if a command contains illegal chars
-        /** 
-         * Register user-defined command callbacks.
-         */
+        // Register user-defined command callbacks.
         if (config.terminal && config.terminal.handlers) {
 
             const commands = Object.keys(config.terminal.handlers)
 
             commands.forEach(command => {
                 // Prohibit whitespaces in command names
+                // TODO: Use a custom error constructor for command syntax errors
                 if (command.includes(' ')) {
                     throw new SyntaxError(`Command name can not contain whitespaces. Got "${command}".`)
                 }
@@ -83,7 +84,8 @@ export default class Program {
 
                 terminal.on(command, async (...argv) => {
                     try {
-                        const error = await handler(...argv)
+                        const event = new Events.LiveTerminalCommandEvent(argv)
+                        const error = await handler(event)
                         if (error) throw error
                     } 
                     catch (error) {

@@ -7,8 +7,6 @@ Features intended for the next version:
 - Add management for long-lived processes like compilers or servers.
 - Add suport for tasks - functions called on different events like CLI input, file changes etc...
 - Add built-in task handlers like "exec", "clone", "restart".
-Minor issues:
-- Live terminal command messages require a 3th party font.
 
 ## Changelog:
 01.12.2022 - Merged major live terminal changes to master which include command handling and shell passthrough.

@@ -1,7 +1,7 @@
 
 import readline from "readline"
 import cp from 'child_process'
-import Terminal from "../other/Terminal.js";
+import Terminal from "./Terminal.js";
 
 import * as c from '../other/Colors.js'
 import type { LiveTerminalSettings } from '../types/config';
