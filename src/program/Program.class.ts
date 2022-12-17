@@ -82,7 +82,7 @@ export default class Program {
 
                 const handler = config.terminal!.handlers![command]
 
-                terminal.on(command, async (...argv) => {
+                terminal.on(command.toLocaleLowerCase(), async (...argv) => {
                     try {
                         const event = new Events.LiveTerminalCommandEvent(argv)
                         const error = await handler(event)

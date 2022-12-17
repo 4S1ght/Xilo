@@ -1,6 +1,5 @@
 
 import type * as cp from 'child_process'
-import type * as Terninal from '../events/handlers/TerminalHandlers'
 import type * as Events from '../events/Events'
 
 // ================================================================
@@ -8,7 +7,7 @@ import type * as Events from '../events/Events'
 export interface Config {
     settings?:  Settings
     terminal?:  LiveTerminalSettings
-    processes?: Record<string, ProcessSettings>
+    processes?: Record<string, ProcessSettingsCreator>
 }
 
 // ================================================================
@@ -48,5 +47,6 @@ export interface ProcessSettings extends cp.SpawnOptions {
     stdout?: 'all' | 'ignore'
 }
 
-// ================================================================
+export type ProcessSettingsCreator = ProcessSettings | (() => ProcessSettings)
 
+// ================================================================

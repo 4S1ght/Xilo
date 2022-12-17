@@ -5,6 +5,9 @@
   "description": "A process manager and helper tool for software development",
   "license": "GPL-3.0",
   "type": "module",
+  "exports": {
+    "./events": "./build/events/Events.js"
+  },
   "bin": {
     "xilo": "./build/bin/bin.js"
   },

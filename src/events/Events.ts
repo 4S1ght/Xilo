@@ -1,6 +1,6 @@
 
 
-// Types =============================================
+// Types ========================================================================================
 
 // Events
 
@@ -19,12 +19,11 @@ export interface XiloEventFields {
 
 /** A callback function passed to event handler creators. */
 export type EventCallback<E extends XiloEvent = XiloEvent> = (e: E) => Promise<any> | any 
-
 /** A function returned when creating a new handler, safely returns an Error, null if successful */
 export type EventHandler<E extends XiloEvent = XiloEvent> = (E: E) => Promise<Error | null>
 /** */
 
-// Classes ===========================================
+// Classes ======================================================================================
 
 class XiloEvent implements XiloEventFields {
     /**
@@ -38,8 +37,6 @@ class XiloEvent implements XiloEventFields {
 
 }
 
-// ===
-
 export class LiveTerminalCommandEvent extends XiloEvent {
     constructor(argv: string[]) {
         super()
@@ -48,7 +45,7 @@ export class LiveTerminalCommandEvent extends XiloEvent {
     }
 }
 
-// Methods ===========================================
+// Methods ======================================================================================
 
 // The most events that are compatible anywhere in the application config.
 // Other more specific event handlers like exec, restart, kill and etc. live
@@ -57,7 +54,7 @@ export class LiveTerminalCommandEvent extends XiloEvent {
 /**
  * Creates a basic callback-based event handler
  */
-export function createEventHandler<E extends XiloEvent = XiloEvent>(callback: EventCallback<E>): EventHandler<E> {
+export function handle<E extends XiloEvent = XiloEvent>(callback: EventCallback<E>): EventHandler<E> {
     return async function(e) {
         try {
             await callback(e)
@@ -73,7 +70,7 @@ export function createEventHandler<E extends XiloEvent = XiloEvent>(callback: Ev
  * Creates an event handler group.  
  * This is useful when a single event, command or task should perform multiple actions in series.
  */
-export function createGroup(callbacks: EventCallback<XiloEvent>[]): EventHandler<XiloEvent> {
+export function group(callbacks: EventCallback<XiloEvent>[]): EventHandler<XiloEvent> {
     return async function(e) {
         try {
             for (let i = 0; i < callbacks.length; i++) await callbacks[i](e)
@@ -94,5 +91,3 @@ export function wait(time?: number): EventHandler<XiloEvent> {
         setTimeout(() => end(null), time);
     })
 }
-
-

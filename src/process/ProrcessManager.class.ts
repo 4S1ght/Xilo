@@ -36,10 +36,17 @@ export class ProcessManager extends EventProxy<'spawn' | 'close' | 'kill' | 'res
         const processNames = Object.keys(this.config.processes!)
         
         for (let i = 0; i < processNames.length; i++) {
+
             const name = processNames[i]
-            const processConfig = this.config.processes![name]
+            const configCreator = this.config.processes![name]
+
+            // Allow process config to exist in object form and to also be a function
+            // returning the configuration to enable debugging
+            const processConfig = typeof configCreator === 'function' ? configCreator() : configCreator;
             const [command, ...argv] = processConfig.command.split(' ')
+            
             this.processes[name] = new Process(name, command, argv, processConfig)
+
         }
 
     }
