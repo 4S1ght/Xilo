@@ -25,6 +25,7 @@ tests/*
 src/lib/placeholder.ts
 
 xilo.config.mjs
+xilo.code-workspace
 
 # Other
 *.local
