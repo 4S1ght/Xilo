@@ -303,7 +303,10 @@ export class LiveTerminal extends Events {
             const exists = this.eventNames().includes(command!)
             const passthrough = this.shell
 
-            if (!forcePassthrough) {
+            if (forcePassthrough && this.p.shellPassthrough) {
+                desync(() => this.shell.stdin?.write(`${command}` + (args.length ? ` ${args}` : '') + '\n'))
+            }
+            else {
                 if (exists) {
                     desync(async () => {
                         try           { await this.emit(command!, ...args) } 
@@ -315,7 +318,6 @@ export class LiveTerminal extends Events {
                     return "cERR"
                 }
             }
-            desync(() => this.shell.stdin?.write(`${command}` + (args.length ? ` ${args}` : '') + '\n'))
             return 'cPASS'
         })()
 
