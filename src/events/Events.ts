@@ -12,6 +12,7 @@ namespace Fields {
 }
 
 export interface XiloEventFields {
+    type: EventType
     terminal: Fields.Terminal
 }
 
@@ -21,15 +22,17 @@ export interface XiloEventFields {
 export type EventCallback<E extends XiloEvent = XiloEvent> = (e: E) => Promise<any> | any 
 /** A function returned when creating a new handler, safely returns an Error, null if successful */
 export type EventHandler<E extends XiloEvent = XiloEvent> = (E: E) => Promise<Error | null>
-/** */
+/** Event types */
+export type EventType = "baseEvent" | "terminalEvent"
 
 // Classes ======================================================================================
 
-class XiloEvent implements XiloEventFields {
-    /**
-     * Contains parameters used for command handling
-     * in the live terminal.
-     */
+export class XiloEvent implements XiloEventFields {
+
+    /** The event type specifies from where the event had originated. Like the rerminal, fs, timer, etc.*/
+    public type: EventType = "baseEvent"
+
+    /** Contains parameters used for command handling in the live terminal.*/
     public terminal: Fields.Terminal = {
         argvRaw: "",
         argv: []
@@ -38,56 +41,13 @@ class XiloEvent implements XiloEventFields {
 }
 
 export class LiveTerminalCommandEvent extends XiloEvent {
+
+    public type: "terminalEvent" = "terminalEvent"
+
     constructor(argv: string[]) {
         super()
         this.terminal.argvRaw = argv.join(" ")
         this.terminal.argv = argv
     }
-}
 
-// Methods ======================================================================================
-
-// The most events that are compatible anywhere in the application config.
-// Other more specific event handlers like exec, restart, kill and etc. live
-// In files designated to their specific categories
-
-/**
- * Creates a basic callback-based event handler
- */
-export function handle<E extends XiloEvent = XiloEvent>(callback: EventCallback<E>): EventHandler<E> {
-    return async function(e) {
-        try {
-            await callback(e)
-            return null
-        } 
-        catch (error) {
-            return error as Error
-        }
-    }
-}
-
-/**
- * Creates an event handler group.  
- * This is useful when a single event, command or task should perform multiple actions in series.
- */
-export function group(callbacks: EventCallback<XiloEvent>[]): EventHandler<XiloEvent> {
-    return async function(e) {
-        try {
-            for (let i = 0; i < callbacks.length; i++) await callbacks[i](e)
-            return null
-        } 
-        catch (error) {
-            return error as Error    
-        }
-    }
-}
-
-/**
- * "wait" creates a handler that exists specifically to create 
- * time gaps in execution of handler groups.
- */
-export function wait(time?: number): EventHandler<XiloEvent> {
-    return () => new Promise<null>(end => {
-        setTimeout(() => end(null), time);
-    })
 }
