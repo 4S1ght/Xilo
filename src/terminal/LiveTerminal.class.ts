@@ -1,10 +1,19 @@
 
 import readline from "readline"
 import cp from 'child_process'
-import Terminal from "./Terminal.js";
+import path from "path";
+import fs from 'fs'
 
+import Terminal from "./Terminal.js";
 import * as c from '../other/Colors.js'
+
 import type { LiveTerminalSettings } from '../types/config';
+
+// =========================================
+
+import * as url from 'url'
+const __filename = url.fileURLToPath(import.meta.url)
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
 // =========================================
 
@@ -21,10 +30,10 @@ class Events {
         this.events[event] = callback
     }
 
-    public async emit(event: string, ...args: string[]) {
+    public async emit(event: string, ...args: any[]) {
         if (!this.events[event]) throw new ReferenceError(`Unknown event "${event}"`)
         await this.events[event](...args)
-    }
+    } 
 
     public eventNames() {
         return Object.keys(this.events)
@@ -51,8 +60,11 @@ const DISABLED_SEQ = ['\r', '\x03', '\x1B']
 
 
 export interface LiveTerminal {
-    on(eventName: string, listener: (...args: string[]) => void): this
-    on(eventName: 'exit', listener: () => any): this
+    on(eventName: string,             listener: (...args: string[]) => void         ): this
+    on(eventName: 'exit',             listener: () => any                           ): this
+    on(eventName: 'history-emit',     listener: (file: string) => any               ): this
+    on(eventName: 'history-emit-err', listener: (file: string, error: Error) => any ): this
+    on(eventName: 'history-load-err', listener: (file: string, error: Error) => any ): this
 }
 export class LiveTerminal extends Events {
 
@@ -67,6 +79,7 @@ export class LiveTerminal extends Events {
     public start(): void {
         readline.emitKeypressEvents(process.stdin)
         process.stdin.setRawMode(true)
+        this._loadHistoryFile()
         this._startInputCapture() 
         this._attachPassthroughShell()
     }
@@ -157,7 +170,49 @@ export class LiveTerminal extends Events {
     /** Stores a the finished command to be displayed when the user presses ENTER. */
     private _finishedCommand: string = ''
 
-    private _transferFromHistory(): void {
+
+    /** Loads a history file back to memory. */
+    private _loadHistoryFile(): void {
+        if (this.p.keepHistory) {
+            try {
+                const file = path.join(__dirname, "../../history.txt")
+                if (fs.existsSync(file)) {
+                    this._history = [
+                        ...fs.readFileSync(file, { encoding: 'utf-8'}).split('\n').map(x => x.split('')),
+                        []
+                    ]
+                    this._historyIndex = this._history.length -1
+                }
+            } 
+            catch (error) {
+                console.log(error)
+                this.emit('history-load-err', error as Error)  
+            }
+        }
+    }
+
+    /** Writes the history to a file to keep it across multiple sessions. */
+    private _saveHistoryFile(): void {
+        if (this.p.keepHistory) {
+            try {
+                const file = path.join(__dirname, "../../history.txt")
+                const slice = this._history.slice(-this.p.keepHistory)
+                slice.pop() // Remove working char array (the one that can be edited by the user)
+                const history = slice.map(x => x.join('')).join('\n')
+                fs.writeFileSync(file, history, 'utf-8')
+                this.emit('history-emit')
+            } 
+            catch (error) {
+                this.emit('history-emit-err', error as Error)
+            }
+        }
+    }
+
+    /**
+     * loads a command from history to the latest spot in history
+     * where it can be edited as if it was typed manually.
+     */
+    private _loadCommandFromHistory(): void {
         const toIndex = this._history.length - 1
         const fromIndex = this._historyIndex
         this._history[toIndex] = [...this._history[fromIndex]]
@@ -170,7 +225,7 @@ export class LiveTerminal extends Events {
      * This is so repeating the same command doesn't flood the history.
      * (I'm looking at you ZSH...)
      */
-    private _removeDuplicatedHistory(): void {
+    private _removeDuplicateCommandString(): void {
         try {
             const iLast = this._history.length - 1, iPrev = this._history.length - 2
             if (this._history[iLast].join('') === this._history[iPrev].join(''))
@@ -206,7 +261,7 @@ export class LiveTerminal extends Events {
 
     /** Handle any non-special keys */
     private KEY_DEFAULT(key: KeyInput): void {
-        if (this._isEditingOldCommand()) this._transferFromHistory()
+        if (this._isEditingOldCommand()) this._loadCommandFromHistory()
         const chars = this._getLastCommand()
         if (!DISABLED_SEQ.includes(key.sequence)) {
             chars.splice(this._cursorIndex, 0, key.sequence)
@@ -217,7 +272,7 @@ export class LiveTerminal extends Events {
 
     /** Submits a command. */
     private KEY_ENTER(): void {
-        if (this._isEditingOldCommand()) this._transferFromHistory()
+        if (this._isEditingOldCommand()) this._loadCommandFromHistory()
 
         let string = this._getLastCommand().join('')
         if (string.replace(/ |\t/g, '').length === 0) return
@@ -232,7 +287,7 @@ export class LiveTerminal extends Events {
         }
 
         if (this._getLastCommand().length > 0) {
-            this._removeDuplicatedHistory()
+            this._removeDuplicateCommandString()
             this._history.push([])
             this._historyIndex = this._history.length - 1
         }
@@ -285,7 +340,7 @@ export class LiveTerminal extends Events {
 
     /** Removes a character behind the cursor. */
     private KEY_BACKSPACE(): void {
-        if (this._isEditingOldCommand()) this._transferFromHistory()
+        if (this._isEditingOldCommand()) this._loadCommandFromHistory()
         const chars = this._getLastCommand()
         if (chars.length > 0 && this._cursorIndex > 0) {
             chars.splice(this._cursorIndex-1, 1)
@@ -296,7 +351,7 @@ export class LiveTerminal extends Events {
 
     /** Removes a character in front of the cursor */
     private KEY_DELETE(): void {
-        if (this._isEditingOldCommand()) this._transferFromHistory()
+        if (this._isEditingOldCommand()) this._loadCommandFromHistory()
         const chars = this._getLastCommand()
         if (this._cursorIndex < chars.length) {
             chars.splice(this._cursorIndex, 1)
@@ -342,11 +397,14 @@ export class LiveTerminal extends Events {
     /** Handles the exit sequence */
     private SEQUENCE_EXIT(): void {
         const now = Date.now()
-        if (now - CTRL_C_ACCEPT_DELAY < this._lastExitCall) this.emit('exit')
+        if (now - CTRL_C_ACCEPT_DELAY < this._lastExitCall) {
+            this._saveHistoryFile()
+            this.emit('exit')
+        }
         this._lastExitCall = now
     }
     
-    private async SEQUENCE_ESCAPE() {
+    private async SEQUENCE_ESCAPE(): Promise<void> {
         if (this.shell) {
             this.shell.kill("SIGTERM")
             await this._attachPassthroughShell(true)

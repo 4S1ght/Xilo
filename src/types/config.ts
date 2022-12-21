@@ -30,6 +30,8 @@ export interface LiveTerminalSettings {
     shellPassthrough?: string
     /** Specifies an object containing handlers for different commands. */
     handlers?: Record<string, Events.EventHandler<Events.LiveTerminalCommandEvent>>
+    /** If specified, live terminal will retain a given amount of commands in history across sessions. */
+    keepHistory?: number
 }
 
 

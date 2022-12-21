@@ -117,10 +117,7 @@ export function exec(command: string, options?: ExecOptions): E.EventHandler {
     return (event) => new Promise<null | Error>(async end => {
         try {
             command = injectArgv(event as E.LiveTerminalCommandEvent, command)
-            const child = cp.exec(command, {
-                ...o,
-                env: { ...process.env, ...o.env }
-            }) 
+            const child = cp.exec(command, { ...o, env: { ...process.env, ...o.env } }) 
 
             child.stdout?.pipe(process.stdout)
             child.stderr!.on('data', (data) =>  console.log(data.toString()))
