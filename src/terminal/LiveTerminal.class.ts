@@ -300,25 +300,38 @@ export class LiveTerminal extends Events {
 
         // Execute the given command
         const commandExecStatus = (() => {
-            const exists = this.eventNames().includes(command!)
+            const isKnownCommand = this.eventNames().includes(command!)
             const passthrough = this.shell
 
             if (forcePassthrough && this.p.shellPassthrough) {
                 desync(() => this.shell.stdin?.write(`${command}` + (args.length ? ` ${args}` : '') + '\n'))
+                return "cPASS"
             }
-            else {
-                if (exists) {
+
+            if (isKnownCommand) {
+                desync(async () => {
+                    try           { await this.emit(command!, ...args) } 
+                    catch (error) { this._showCommandError(command!, args, error as Error) }
+                })
+                return "cOK"
+            }
+
+            if (!isKnownCommand) {
+                if (passthrough) {
+                    desync(() => this.shell.stdin?.write(`${command}` + (args.length ? ` ${args}` : '') + '\n'))
+                    return "cPASS"
+                }
+                if (!passthrough) {
                     desync(async () => {
                         try           { await this.emit(command!, ...args) } 
                         catch (error) { this._showCommandError(command!, args, error as Error) }
                     })
-                    return "cOK"
-                }
-                if (!passthrough) {
                     return "cERR"
                 }
             }
-            return 'cPASS'
+
+            return "cOK"
+
         })()
 
 
