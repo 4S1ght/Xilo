@@ -55,15 +55,12 @@ export const getConfigPath = (file?: string): [string, boolean] => {
 }
 
 
-
 /**
  * Creates a time gap in code execution if when used in async functions.
  * Works similarly to `wait` in Bash, but with a specific delay.
  */
 export const wait = (time: number) => 
     new Promise(resolve => setTimeout(resolve, time))
-
-
 
 /**
  * Checks if the value is an error.
@@ -92,4 +89,35 @@ export class Delay {
         setTimeout(() => this.ready = true, this.delay);
     }
 
+}
+
+/** A more detailed `typeof x` implementation */
+export const typeOf = (x: any) => {
+    if (Array.isArray(x)) return "array"
+    if (x === null) return "null"
+    return typeof x
+}
+
+/**
+ * Allows to safely check the type of a nested object property.
+ * Helps limit errors when checking optional properties.
+ */
+export const typeOfNested = (obj: any, prop: string) => {
+    try {
+        const props = prop.split('.')
+        const type = typeOf(obj)
+        if (['object', 'array'].includes(type)) {
+            let reference = obj
+            for (let i = 0; i < props.length; i++) {
+                const prop = props[i]
+                reference = reference[prop]
+                const type = typeOf(reference)
+                if (!['object', 'array'].includes(type) || i === props.length - 1) return type
+            }
+        }
+        else return type
+    } 
+    catch (error) {
+        return "undefined"    
+    }
 }
