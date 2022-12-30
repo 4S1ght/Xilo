@@ -255,6 +255,9 @@ export class LiveTerminal extends Events {
         Terminal.ERROR(`An error had accured after calling the command handler for "${command}${_args ? ' '+_args : ''}":`)
         console.log(error)
     }
+    private _showUnknownCommandError(command: string): void {
+        Terminal.ERROR(`"${command}" is recognised as neither internal or user-configured command.`)
+    }
 
     // KEYS
     // =========================================
@@ -304,7 +307,7 @@ export class LiveTerminal extends Events {
             const passthrough = this.shell
 
             if (forcePassthrough && this.p.passthroughShell) {
-                desync(() => this.shell.stdin?.write(`${command}` + (args.length ? ` ${args}` : '') + '\n'))
+                desync(() => this.shell.stdin?.write(`${command}` + (args.length ? ` ${args.join(' ')}` : '') + '\n'))
                 return "cPASS"
             }
 
@@ -318,14 +321,11 @@ export class LiveTerminal extends Events {
 
             if (!isKnownCommand) {
                 if (passthrough) {
-                    desync(() => this.shell.stdin?.write(`${command}` + (args.length ? ` ${args}` : '') + '\n'))
+                    desync(() => this.shell.stdin?.write(`${command}` + (args.length ? ` ${args.join(' ')}` : '') + '\n'))
                     return "cPASS"
                 }
                 if (!passthrough) {
-                    desync(async () => {
-                        try           { await this.emit(command!, ...args) } 
-                        catch (error) { this._showCommandError(command!, args, error as Error) }
-                    })
+                    desync(async () => this._showUnknownCommandError(command!))
                     return "cERR"
                 }
             }
