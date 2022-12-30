@@ -6,7 +6,8 @@
   "license": "GPL-3.0",
   "type": "module",
   "exports": {
-    "./events": "./build/events/Events.js"
+    "./events": "./build/events/Events.js",
+    "./types": "./build/types/config.d.ts"
   },
   "bin": {
     "xilo": "./build/bin/bin.js"

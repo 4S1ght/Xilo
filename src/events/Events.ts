@@ -23,7 +23,7 @@ export type EventCallback<E extends XiloEvent = XiloEvent> = (e: E) => Promise<a
 /** A function returned when creating a new handler, safely returns an Error, null if successful */
 export type EventHandler<E extends XiloEvent = XiloEvent> = (E: E) => Promise<Error | null>
 /** Event types */
-export type EventType = "baseEvent" | "terminalEvent"
+export type EventType = "baseEvent" | "terminalEvent" | "task"
 
 // Classes ======================================================================================
 
@@ -48,6 +48,16 @@ export class LiveTerminalCommandEvent extends XiloEvent {
         super()
         this.terminal.argvRaw = argv.join(" ")
         this.terminal.argv = argv
+    }
+
+}
+
+export class StartupTaskEvent extends XiloEvent {
+
+    public type: "task" = "task"
+
+    constructor(public ignoreErrors: boolean) {
+        super()
     }
 
 }

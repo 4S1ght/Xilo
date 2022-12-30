@@ -8,14 +8,10 @@ import * as c from '../other/Colors.js'
 
 // Handlers =======================================================================================
 
-// The most events that are compatible anywhere in the application config.
-// Other more specific event handlers like exec, restart, kill and etc. live
-// In files designated to their specific categories
-
 /**
  * Creates a basic callback-based event handler
  */
-export function handle<Event extends E.XiloEvent = E.XiloEvent>(callback: E.EventCallback<Event>): E.EventHandler<Event> {
+export function callback<Event extends E.XiloEvent = E.XiloEvent>(callback: E.EventCallback<Event>): E.EventHandler<Event> {
     return async function(e) {
         try {
             await callback(e)
@@ -51,8 +47,15 @@ export function group(callbacks: E.EventHandler[]): E.EventHandler {
 // =======================================================================
 
 /**
- * "wait" creates a handler that exists specifically to create 
- * time gaps in execution of handler groups.
+ * "wait" is an event handler used specifically to create delays
+ * in execution of grouped handlers. 
+ * ```javascript 
+ * group([
+ *    exec("...")
+ *    wait(1000) // wait 1s
+ *    handler(() => ...)
+ * ])
+ * ```
  */
 export function wait(time?: number): E.EventHandler {
     return () => new Promise<null | Error>(end => {

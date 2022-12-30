@@ -8,6 +8,8 @@ import LiveTerminal from '../terminal/LiveTerminal.class.js'
 import Terminal from '../terminal/Terminal.js'
 import * as Events from '../events/Events.js'
 import * as c from '../other/Colors.js'
+import * as util from '../other/Utils.js'
+import * as consts from '../other/Constants.js'
 
 
 export default class Program {
@@ -29,10 +31,10 @@ export default class Program {
 
         this.setProcessEventMessages()
         this.setLiveTerminalCommands()
-            
-        await m.startEach((process) => {
-            Terminal.INFO(`Starting "${process.name}"`)
-        })
+
+        await this.runStartupTasks()
+        await m.startEach((process) => Terminal.INFO(`Starting "${process.name}"`))
+
         this.terminal.start()
         
     }
@@ -45,7 +47,7 @@ export default class Program {
             process.on('kill-error',    (err: Error) => Terminal.ERROR(`An error had accurd while attempting to kill "${process.name}".`, err))
             process.on('restart',       () =>           Terminal.WARN (`Restarted process "${process.name}".`))
             process.on('restart-error', (err: Error) => Terminal.ERROR(`An error had accured while attemptting to restart "${process.name}".`, err))
-            process.on('spawn',         () =>           Terminal.INFO(`Process "${process.name}" is running.`))
+            process.on('spawn',         () =>           Terminal.INFO (`Process "${process.name}" is running.`, c.grey(`[pid ${process.child.pid}]`)))
         }
     }
 
@@ -63,7 +65,7 @@ export default class Program {
                 if (manager.processes[name].child.exitCode === null)
                     await manager.processes[name].kill()
             }
-            process.exit()
+            process.exit(consts.EXIT_CODES.USER_FORCED)
         })
 
         // TODO: throw and stop initialisation if a command contains illegal chars
@@ -97,6 +99,30 @@ export default class Program {
 
     }
 
+    private async runStartupTasks(): Promise<void> {
+        
+        const itemsType  = util.typeOfNested(this.config, 'tasks.items')
+        const hasItems   = ['object', 'array'].includes(itemsType) && this.config.tasks!.items!.length > 0
+        
+        const spawnDelay = util.typeOfNested(this.config, 'tasks.timing') === 'number' ? this.config.tasks!.timing : 500
+        const ignoreErrors = util.typeOfNested(this.config, 'tasks.ignoreErrors') === 'boolean' ? this.config.tasks!.ignoreErrors! : false
+
+        // Skip if there are no tasks specified
+        if (!hasItems) return
+
+        const tasks = this.config.tasks!.items!
+
+        for (let i = 0; i < tasks.length; i++) {
+            const task = tasks[i]
+            const event = new Events.StartupTaskEvent(ignoreErrors)
+            const error = await task(event)
+            
+            if (error) Terminal.ERROR(`An error had accured in task #${i+1}.`, error as Error)
+            if (error && !ignoreErrors) process.exit(consts.EXIT_CODES.TASK_ERROR)
+        }
+
+
+    }
 
 }
 

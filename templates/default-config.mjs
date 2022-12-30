@@ -9,7 +9,7 @@ export default {
 
     // Terminal settings
     terminal: {
-        shellPassthrough: "powershell.exe"
+        passthroughShell: "powershell.exe"
     },
 
     // Defines processes to spawn once the startup sequence has finished.

@@ -132,10 +132,10 @@ export class LiveTerminal extends Events {
 
     private _attachPassthroughShell(hideWarning?: boolean) {
         return new Promise<void>((resolve, reject) => {
-            if (this.p.shellPassthrough) {
-                if (!hideWarning) Terminal.WARN(`Shell passthrough has been enabled (${this.p.shellPassthrough})`)
+            if (this.p.passthroughShell) {
+                if (!hideWarning) Terminal.WARN(`Shell passthrough has been enabled (${this.p.passthroughShell})`)
                 try {
-                    this.shell = cp.spawn(this.p.shellPassthrough!, {
+                    this.shell = cp.spawn(this.p.passthroughShell!, {
                         stdio: ['pipe', 'inherit', 'inherit']
                     })
                     this.shell.on('spawn', resolve)
@@ -303,7 +303,7 @@ export class LiveTerminal extends Events {
             const isKnownCommand = this.eventNames().includes(command!)
             const passthrough = this.shell
 
-            if (forcePassthrough && this.p.shellPassthrough) {
+            if (forcePassthrough && this.p.passthroughShell) {
                 desync(() => this.shell.stdin?.write(`${command}` + (args.length ? ` ${args}` : '') + '\n'))
                 return "cPASS"
             }
@@ -423,7 +423,7 @@ export class LiveTerminal extends Events {
         if (this.shell) {
             this.shell.kill("SIGTERM")
             await this._attachPassthroughShell(true)
-            Terminal.INFO(`Restarted ${this.p.shellPassthrough}`)
+            Terminal.INFO(`Restarted ${this.p.passthroughShell}`)
         }
     }
    

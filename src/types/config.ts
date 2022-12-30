@@ -1,33 +1,31 @@
 
 import type * as cp from 'child_process'
 import type * as Events from '../events/Events'
+import type * as misc from './misc'
 
-// ================================================================
+// Default ====================================================================
 
 export interface Config {
-    settings?:  Settings
+    /** 
+     * The "terminal" objects provides configuration options for the integrated terminal interface.
+     * It allows to specify a `passthroughShell` to pass all unidentified commands to a shell, provides
+     * a way to keep command history between sessions using `keepHistory` or even register custom commands
+     * along with their handlers.
+     */
     terminal?:  LiveTerminalSettings
-    processes?: Record<string, ProcessSettingsCreator>
+    processes?: ProcessConfig
+    tasks?:     TasksConfig
 }
 
-// ================================================================
-
-/** 
- * Specifies miscellaneous settings used by many parts of the manager. 
- */
-export interface Settings {
-    /** Specifies time gaps between spawning child processes. */
-    scriptSpawnDelay?: number
-}
     
-// ================================================================
+// Live terminal ==============================================================
 
 /**
  * Specifies live terminal settings.
  */
 export interface LiveTerminalSettings {
     /** If defined LiveTerminal will attempt to pass all unknown commands to the provided shell process. */
-    shellPassthrough?: string
+    passthroughShell?: string
     /** Specifies an object containing handlers for different commands. */
     handlers?: Record<string, Events.EventHandler<Events.LiveTerminalCommandEvent>>
     /** If specified, live terminal will retain a given amount of commands in history across sessions. */
@@ -35,12 +33,12 @@ export interface LiveTerminalSettings {
 }
 
 
-// ================================================================
+// Child processes ============================================================
 
 /**
  * Defines processes to spawn once the startup sequence has finished.
  */
-export interface ProcessSettings extends cp.SpawnOptions {
+export interface ProcessSpawnOptions extends cp.SpawnOptions {
     /** Shell command that summons a CLI app or a script. */
     command: string
     /** Specifies the current working directory for the spawned process. */
@@ -49,6 +47,22 @@ export interface ProcessSettings extends cp.SpawnOptions {
     stdout?: 'all' | 'ignore'
 }
 
-export type ProcessSettingsCreator = ProcessSettings | (() => ProcessSettings)
+export type ProcessSettingsCreator = ProcessSpawnOptions | (() => ProcessSpawnOptions)
 
-// ================================================================
+export interface ProcessConfig {
+    /** Specifies time delays between each spawned process. */
+    timing: number
+    /** Specifies child processes and their configuration. */
+    items?: Record<string, ProcessSettingsCreator>
+}
+
+// Startup tasks ==============================================================
+
+export interface Task {
+
+}
+export interface TasksConfig {
+    timing?: number
+    ignoreErrors?: boolean
+    items?: Array<Events.EventHandler<Events.XiloEvent>>
+}
