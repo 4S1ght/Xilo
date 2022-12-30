@@ -114,6 +114,7 @@ export const typeOfNested = (obj: any, prop: string) => {
                 const type = typeOf(reference)
                 if (!['object', 'array'].includes(type) || i === props.length - 1) return type
             }
+            return "undefined"
         }
         else return type
     } 
